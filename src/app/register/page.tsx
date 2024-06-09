@@ -18,15 +18,22 @@ import { useRouter } from 'next/navigation';
 export default function Home() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
   const router = useRouter();
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post('/api/login', { email, password });
-      if (res.status === 200) {
+      const res = await axios.post('/api/createUser', {
+        email,
+        password,
+        fullName,
+        phone
+      });
+      if (res.status === 201) {
         router.push('/home');
         localStorage.setItem('token', res.data.token);
-        localStorage.setItem('userId', res.data.userId);
+        localStorage.setItem('userId', res.data.user._id);
       }
     } catch (error) {
       console.log(error);
@@ -52,9 +59,20 @@ export default function Home() {
           p={6}
         >
           <Heading as='h2' size='lg' textAlign='center' mb={6}>
-            Inicia sesión
+            Registrate
           </Heading>
           <Stack spacing={4}>
+            <FormControl id='fullName'>
+              <FormLabel>Nombre Completo</FormLabel>
+              <Input
+                onChange={(e) => setFullName(e.target.value)}
+                type='text'
+              />
+            </FormControl>
+            <FormControl id='phone'>
+              <FormLabel>Teléfono</FormLabel>
+              <Input onChange={(e) => setPhone(e.target.value)} type='tel' />
+            </FormControl>
             <FormControl id='email'>
               <FormLabel>Dirección de correo electrónico</FormLabel>
               <Input onChange={(e) => setEmail(e.target.value)} type='email' />
@@ -72,13 +90,13 @@ export default function Home() {
               size='lg'
               fontSize='md'
             >
-              Iniciá sesión
+              Registrate
             </Button>
           </Stack>
           <Text mt={4} textAlign='center'>
             {`No tenés cuenta?`}{' '}
-            <a href='/register' style={{ color: 'teal' }}>
-              Registrate
+            <a href='/' style={{ color: 'teal' }}>
+              Inicià sesiòn
             </a>
           </Text>
         </Box>
