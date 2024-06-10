@@ -34,6 +34,13 @@ export default function Home() {
         router.push('/home');
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('userId', res.data.user._id);
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            email: res.data.user.email,
+            fullName: res.data.user.fullName
+          })
+        );
       }
     } catch (error) {
       console.log(error);

@@ -15,12 +15,13 @@ import {
 } from 'react-icons/fa6';
 import ImageModal from '../components/ImageModal';
 import Carousel from '../components/Carousel';
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { BiInfoCircle } from 'react-icons/bi';
 import InfoModal from '../components/InfoModal';
 import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import Loader from '../components/Loader';
 
 enum directions {
   left = 'left',
@@ -57,16 +58,49 @@ interface Property {
   interestedUsers: any[];
 }
 
+interface Customer {
+  fullName: string;
+  email: string;
+}
+const defaultProperty = {
+  _id: 'last',
+  title: 'last',
+  location: 'last',
+  stories: 0,
+  pool: false,
+  garage: 0,
+  isPrivate: false,
+  antiquity: 0,
+  internet: false,
+  ac: false,
+  heat: false,
+  gas: false,
+  more: 'last',
+  category: 'last',
+  operationType: 'last',
+  rooms: 'last',
+  showPrice: false,
+  coveredMeters: 0,
+  totalMenters: 0, // Note: Check if this should be 'totalMeters'
+  price: 0,
+  images: ['/placeholder.webp'],
+  bedrooms: 0,
+  bathrooms: 0,
+  available: false,
+  interestedUsers: []
+};
+
 export default function Home() {
   const [db, setDb] = useState<Property[] | null>(null);
+  const [loading, setLoading] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(
     db && Array.isArray(db) ? db.length - 1 : 0
   );
   const [selectedImage, setSelectedImage] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
-  const [lastDirection, setLastDirection] = useState('');
-  // used for outOfFrame closure
+  const [customer, setCustomer] = useState<Customer | null>(null);
+  const [userId, setUserId] = useState('');
   const currentIndexRef = useRef(currentIndex);
   const router = useRouter();
   const childRefs = useMemo(
@@ -77,18 +111,30 @@ export default function Home() {
     [db?.length]
   );
 
+  const getAllProperties = async () => {
+    setLoading(true);
+    try {
+      const { data } = await axios.get('/api/listProperties');
+      const updatedProperties = [defaultProperty, ...data.properties];
+      setDb(updatedProperties);
+      setCurrentIndex(updatedProperties.length - 1);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await axios.get('/api/listProperties');
-        console.log(data);
-        setDb(data.properties);
-        setCurrentIndex(data.properties.length - 1);
-      } catch (error) {}
-    })();
+    getAllProperties();
   }, []);
 
   useEffect(() => {
+    const customer = localStorage.getItem('user');
+    const userId = localStorage.getItem('userId');
+    setUserId(userId || '');
+
+    if (customer) setCustomer(JSON.parse(customer));
     const token = localStorage.getItem('token');
     if (!token) {
       router.push('/');
@@ -121,23 +167,44 @@ export default function Home() {
     index: number,
     property: Property
   ) => {
-    setLastDirection(direction);
     updateCurrentIndex(index - 1);
     const userId = localStorage.getItem('userId');
-    if (
-      direction === directions.right &&
-      userId &&
-      !property.interestedUsers.some((user) => user._id === userId)
-    ) {
+    const alreadyLiked = property.interestedUsers.some(
+      (user) => user._id === userId
+    );
+    if (direction === directions.right && userId && !alreadyLiked) {
       try {
-        await axios.post('/api/addUserToProperty', {
-          userId,
-          id: property._id
-        });
-        await axios.post('/api/emailSender', {
-          name: 'Nombre',
-          email: 'matijuncos@gmail.com',
-          message: 'Probando'
+        await Promise.all([
+          axios.post('/api/addUserToProperty', {
+            userId,
+            id: property._id
+          }),
+          axios.post('/api/emailSender', {
+            name: customer?.fullName,
+            email: customer?.email,
+            message: `
+            <div style="font-family: 'Helvetica Neue', Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; background-color: #fff; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+  <h1 style="color: #2c3e50; font-size: 28px; text-align: center;">¡Hola ${customer?.fullName}!</h1>
+  <p style="font-size: 18px; line-height: 1.6; color: #7f8c8d; text-align: justify;">Gracias por tu interés en nuestra propiedad: <strong style="color: #2980b9;">${property.title}</strong>.</p>
+  <p style="font-size: 18px; line-height: 1.6; color: #7f8c8d; text-align: justify;">Creemos que esta propiedad podría ser perfecta para ti, ¡y estamos emocionados de poder ofrecértela!</p>
+  <p style="font-size: 18px; line-height: 1.6; color: #7f8c8d; text-align: justify;">Un representante se pondrá en contacto contigo pronto para responder a cualquier pregunta y brindarte más información.</p>
+  <p style="font-size: 18px; line-height: 1.6; color: #7f8c8d; text-align: justify;">¡Gracias de nuevo por tu interés!</p>
+  <p style="font-size: 18px; line-height: 1.6; color: #2c3e50; text-align: center; font-weight: bold;">El equipo de [Nombre de tu Empresa]</p>
+</div>
+          `
+          })
+        ]);
+        setDb((prevDb) => {
+          if (!prevDb) return prevDb;
+          return prevDb.map((p) => {
+            if (p._id === property._id) {
+              return {
+                ...p,
+                interestedUsers: [...p.interestedUsers, { _id: userId }]
+              };
+            }
+            return p;
+          });
         });
       } catch (error) {
         console.log(error);
@@ -191,121 +258,174 @@ export default function Home() {
   };
 
   const hasMainFeatures =
-    db?.[currentIndex]?.totalMenters ||
-    db?.[currentIndex]?.operationType ||
-    db?.[currentIndex]?.bathrooms ||
-    db?.[currentIndex]?.rooms ||
-    db?.[currentIndex]?.bedrooms;
+    (db?.[currentIndex]?.totalMenters ||
+      db?.[currentIndex]?.operationType ||
+      db?.[currentIndex]?.bathrooms ||
+      db?.[currentIndex]?.rooms ||
+      db?.[currentIndex]?.bedrooms) &&
+    db?.[currentIndex]?._id !== 'last';
+
+  console.log(userId);
 
   return (
     <main>
-      <div className='app-container'>
-        <ImageModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          imageUrl={selectedImage}
-        />
-        <InfoModal
-          information={db?.[currentIndex]}
-          onClose={() => setIsInfoModalOpen(false)}
-          isOpen={isInfoModalOpen}
-        />
-        <div className='flex'>
-          <div className='cardContainer'>
-            {db?.map((character, index) => (
-              <TinderCard
-                ref={childRefs[index] as React.RefObject<any>}
-                className='swipe'
-                key={character.title}
-                preventSwipe={[directions.up, directions.down]}
-                swipeRequirementType='position'
-                onSwipe={(dir) =>
-                  swiped(dir, character.title, index, character)
-                }
-                onCardLeftScreen={() => outOfFrame(character.title, index)}
-              >
-                <div
-                  style={{
-                    backgroundImage: 'url(' + character.images[0] + ')'
-                  }}
-                  className='card'
+      {loading ? (
+        <Flex
+          w='100%'
+          height='100%'
+          justifyContent='center'
+          alignItems='center'
+        >
+          <Loader />
+        </Flex>
+      ) : (
+        <div className='app-container'>
+          <ImageModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            imageUrl={selectedImage}
+          />
+          <InfoModal
+            information={db?.[currentIndex]}
+            onClose={() => setIsInfoModalOpen(false)}
+            isOpen={isInfoModalOpen}
+          />
+          <div className='flex'>
+            <div className='cardContainer'>
+              {db?.map((character, index) => (
+                <TinderCard
+                  ref={childRefs[index] as React.RefObject<any>}
+                  className='swipe'
+                  key={character.title}
+                  preventSwipe={
+                    hasMainFeatures
+                      ? [directions.up, directions.down]
+                      : [
+                          directions.up,
+                          directions.down,
+                          directions.left,
+                          directions.right
+                        ]
+                  }
+                  swipeRequirementType='position'
+                  onSwipe={(dir) =>
+                    swiped(dir, character.title, index, character)
+                  }
+                  onCardLeftScreen={() => outOfFrame(character.title, index)}
                 >
-                  <h3>{character.title}</h3>
                   <div
-                    className='card-more-info'
-                    onClick={() => setIsInfoModalOpen(true)}
+                    style={{
+                      backgroundImage: 'url(' + character.images[0] + ')'
+                    }}
+                    className='card'
                   >
-                    <BiInfoCircle color='rgb(40, 35, 97)' />
-                    <Text>Ver información</Text>
+                    {character.interestedUsers.some(
+                      (user) => user._id === userId
+                    ) && (
+                      <Box
+                        border='solid 6px green'
+                        borderRadius='16px'
+                        backgroundColor='white'
+                        p='8px'
+                        position='absolute'
+                        top={'62px'}
+                        right={'14px'}
+                        transform='rotate(30deg)'
+                        boxShadow='4px 4px 12px rgba(0, 0, 0, 0.3)'
+                        color='green'
+                        fontWeight={700}
+                        fontSize='24px'
+                      >
+                        <Text>Le diste Like!</Text>
+                      </Box>
+                    )}
+                    {hasMainFeatures && <h3>{character.title}</h3>}
+                    {hasMainFeatures && (
+                      <div
+                        className='card-more-info'
+                        onClick={() => setIsInfoModalOpen(true)}
+                      >
+                        <BiInfoCircle color='rgb(40, 35, 97)' />
+                        <Text>Ver información</Text>
+                      </div>
+                    )}
                   </div>
-                </div>
-              </TinderCard>
-            ))}
-          </div>
-          <br />
-          <div className='buttons-container'>
-            <button
-              className='button button-undo'
-              disabled={!canGoBack}
-              style={{ backgroundColor: !canGoBack ? '#c3c4d3' : '' }}
-              onClick={() => goBack()}
-            >
-              <FaArrowRotateLeft size={24} color='#886602' />
-            </button>
-            <button
-              className='button button-left'
-              disabled={!canSwipe}
-              style={{ backgroundColor: !canSwipe ? '#c3c4d3' : '' }}
-              onClick={() => swipe(directions.left)}
-            >
-              <FaThumbsDown size={24} color='#BB2D3E' />
-            </button>
-            <button
-              className='button button-right'
-              disabled={!canSwipe}
-              style={{ backgroundColor: !canSwipe ? '#c3c4d3' : '' }}
-              onClick={() => swipe(directions.right)}
-            >
-              <FaThumbsUp size={24} color='rgb(10,101,0)' />
-            </button>
-          </div>
-          {!!db?.[currentIndex]?.images?.length && (
-            <Box my='16px'>
-              <Carousel
-                images={db?.[currentIndex]?.images}
-                setIsModalOpen={setIsModalOpen}
-                setSelectedImage={setSelectedImage}
-              />
-            </Box>
-          )}
-          <div className='info-container'>
-            {hasMainFeatures ? (
-              <div className='description'>
-                <IconAndData
-                  Icon={FaHouse}
-                  textValue={
-                    'Baños: ' + db?.[currentIndex]?.bathrooms.toString()
-                  }
+                </TinderCard>
+              ))}
+            </div>
+            <br />
+            <div className='buttons-container'>
+              <button
+                className='button button-undo'
+                disabled={!canGoBack}
+                style={{ backgroundColor: !canGoBack ? '#c3c4d3' : '' }}
+                onClick={() => goBack()}
+              >
+                <FaArrowRotateLeft size={24} color='#886602' />
+              </button>
+              {hasMainFeatures && (
+                <>
+                  <button
+                    className='button button-left'
+                    disabled={!canSwipe}
+                    style={{ backgroundColor: !canSwipe ? '#c3c4d3' : '' }}
+                    onClick={() => swipe(directions.left)}
+                  >
+                    <FaThumbsDown size={24} color='#BB2D3E' />
+                  </button>
+                  <button
+                    className='button button-right'
+                    disabled={!canSwipe}
+                    style={{ backgroundColor: !canSwipe ? '#c3c4d3' : '' }}
+                    onClick={() => swipe(directions.right)}
+                  >
+                    <FaThumbsUp size={24} color='rgb(10,101,0)' />
+                  </button>
+                </>
+              )}
+            </div>
+            {!!db?.[currentIndex]?.images?.length && hasMainFeatures && (
+              <Box my='16px'>
+                <Carousel
+                  images={db?.[currentIndex]?.images}
+                  setIsModalOpen={setIsModalOpen}
+                  setSelectedImage={setSelectedImage}
                 />
-                <IconAndData
-                  Icon={FaHouse}
-                  textValue={
-                    'Ambientes: ' + db?.[currentIndex]?.rooms.toString()
-                  }
-                />
-                <IconAndData
-                  Icon={FaHouse}
-                  textValue={
-                    'Dormitorios: ' + db?.[currentIndex]?.bedrooms.toString()
-                  }
-                />
-              </div>
-            ) : (
-              <>Nada para ver!</>
+              </Box>
             )}
+            <div className='info-container'>
+              {hasMainFeatures ? (
+                <div className='description'>
+                  <IconAndData
+                    Icon={FaHouse}
+                    textValue={
+                      'Baños: ' + db?.[currentIndex]?.bathrooms.toString()
+                    }
+                  />
+                  <IconAndData
+                    Icon={FaHouse}
+                    textValue={
+                      'Ambientes: ' + db?.[currentIndex]?.rooms.toString()
+                    }
+                  />
+                  <IconAndData
+                    Icon={FaHouse}
+                    textValue={
+                      'Dormitorios: ' + db?.[currentIndex]?.bedrooms.toString()
+                    }
+                  />
+                </div>
+              ) : (
+                <Box m='auto'>
+                  <Text fontSize='32px' fontWeight={600} mt='16px'>
+                    Llegaste al final!
+                  </Text>
+                </Box>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </main>
   );
 }

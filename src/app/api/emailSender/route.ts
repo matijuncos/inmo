@@ -1,17 +1,31 @@
-import EmailTemplate from '@/app/components/EmailTemplate';
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
+
 export async function POST(request: Request) {
   const body = await request.json();
   const { name, email, message } = body;
+  const userEmail = process.env.EMAIL;
+  const userPassword = process.env.PASSWORD;
   try {
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    console.log(EmailTemplate({ name, email, message }));
-    await resend.emails.send({
-      from: 'Inmobiliaria <shahmir@mydevpa.ge>',
-      to: email,
-      subject: 'Inmobiliaria',
-      react: JSON.stringify(EmailTemplate({ name, email, message }))
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: userEmail,
+        pass: userPassword
+      }
     });
+    console.log({
+      user: userEmail,
+      pass: userPassword
+    });
+
+    const mail = await transporter.sendMail({
+      from: 'matijuncos@gmail.com',
+      to: email,
+      subject: `${name} Matcheaste con una propiedad!`,
+      html: `<b>${message}</b>`
+    });
+    console.log('Message sent: %s', mail.messageId);
+
     return Response.json({
       error: null,
       success: true

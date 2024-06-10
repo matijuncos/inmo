@@ -22,7 +22,13 @@ export async function POST(request: Request) {
   });
 
   return Response.json(
-    { message: 'User logged', token, userId: user._id },
+    {
+      message: 'User logged',
+      token,
+      userId: user._id,
+      name: user.fullName,
+      email: user.email
+    },
     { status: 200 }
   );
 }

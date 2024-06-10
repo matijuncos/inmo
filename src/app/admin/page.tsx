@@ -4,18 +4,18 @@ import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
-  TableContainer,
   Box,
-  Flex
+  Flex,
+  useDisclosure,
+  Button
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { BiPlusCircle } from 'react-icons/bi';
 import AdminModal from '../components/AdminModal';
+import PropertyDetailsModal from '../components/PropertyDetailsModal';
 interface Property {
   _id: string;
   title: string;
@@ -47,6 +47,10 @@ const Admin = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [openMoreInfoModal, setOpenMoreInfoModal] = useState(false);
   const [interestedPeople, setInterestedPeople] = useState([]);
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(
+    null
+  );
+  const { isOpen, onOpen, onClose } = useDisclosure();
   useEffect(() => {
     (async () => {
       try {
@@ -60,20 +64,28 @@ const Admin = () => {
     const handleClick = (interestedPeolple: any) => {
       setInterestedPeople(interestedPeolple);
       setOpenMoreInfoModal(true);
-      console.log(interestedPeolple);
     };
+
     return (
       <Td>
         <Flex alignItems='center' gap='4px'>
           {interestedPeople?.[0]?.fullName || 'N/A'}
           {interestedPeople.length > 0 && (
-            <BiPlusCircle onClick={() => handleClick(interestedPeople)} />
+            <BiPlusCircle
+              cursor='pointer'
+              size='20px'
+              color='green'
+              onClick={() => handleClick(interestedPeople)}
+            />
           )}
         </Flex>
       </Td>
     );
   };
-
+  const handleOpenModal = (property: Property) => {
+    setSelectedProperty(property);
+    onOpen();
+  };
   return (
     <>
       <AdminModal
@@ -81,34 +93,58 @@ const Admin = () => {
         interestedPeople={interestedPeople}
         onClose={() => setOpenMoreInfoModal(false)}
       />
+      <PropertyDetailsModal
+        isOpen={isOpen}
+        onClose={onClose}
+        property={selectedProperty}
+      />
       <Box>
-        <Table>
-          <TableCaption>Imperial to metric conversion factors</TableCaption>
-          <Thead>
-            <Tr>
-              <Th>Propiedad</Th>
-              <Th>Metros Totales</Th>
-              <Th>Metros Cubiertos</Th>
-              <Th>Interesados</Th>
-              <Th>Es Barrio Privado</Th>
-              <Th>Precio</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {properties?.map((prop, i) => {
-              return (
-                <Tr key={i}>
-                  <Td>{prop.title}</Td>
-                  <Td>{prop.totalMenters}</Td>
-                  <Td>{prop.coveredMeters}</Td>
-                  <CustomCell interestedPeople={prop.interestedUsers} />
-                  <Td>U$D{prop.isPrivate ? 'Si' : 'No'}</Td>
-                  <Td>U$D{prop.price}</Td>
-                </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
+        <Box overflowX='auto'>
+          <Table whiteSpace='nowrap' layout='auto'>
+            <Thead>
+              <Tr>
+                <Th>Propiedad</Th>
+                <Th>Metros Totales</Th>
+                <Th>Metros Cubiertos</Th>
+                <Th>Interesados</Th>
+                <Th>Precio</Th>
+                <Th>Categoría</Th>
+                <Th>Tipo de Operación</Th>
+                <Th>Habitaciones</Th>
+                <Th>Dormitorios</Th>
+                <Th>Baños</Th>
+                <Th>Disponible</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {properties?.map((prop, i) => {
+                return (
+                  <Tr key={i}>
+                    <Td>{prop.title}</Td>
+                    <Td>{prop.totalMenters} m2</Td>
+                    <Td>{prop.coveredMeters} m2</Td>
+                    <CustomCell interestedPeople={prop.interestedUsers} />
+                    <Td>U$D{prop.price}</Td>
+                    <Td>{prop.category}</Td>
+                    <Td>{prop.operationType}</Td>
+                    <Td>{prop.rooms}</Td>
+                    <Td>{prop.bedrooms}</Td>
+                    <Td>{prop.bathrooms}</Td>
+                    <Td>{prop.available ? 'Si' : 'No'}</Td>
+                    <Td>
+                      <Button
+                        colorScheme='blue'
+                        onClick={() => handleOpenModal(prop)}
+                      >
+                        Ver Más
+                      </Button>
+                    </Td>
+                  </Tr>
+                );
+              })}
+            </Tbody>
+          </Table>
+        </Box>
       </Box>
     </>
   );
