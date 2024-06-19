@@ -4,6 +4,9 @@ import './globals.css';
 import { ChakraProvider } from '@chakra-ui/react';
 import Header from './components/Header';
 const inter = Inter({ subsets: ['latin'] });
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -19,6 +22,7 @@ export default function RootLayout({
     <html lang='en'>
       <body className={inter.className}>
         <ChakraProvider>
+          <ToastContainer />
           <Header />
           {children}
         </ChakraProvider>

@@ -13,36 +13,16 @@ import {
   Button
 } from '@chakra-ui/react';
 import axios from 'axios';
+import { confirmAlert } from 'react-confirm-alert';
 import { BiPlusCircle } from 'react-icons/bi';
 import AdminModal from '../components/AdminModal';
 import PropertyDetailsModal from '../components/PropertyDetailsModal';
-interface Property {
-  _id: string;
-  title: string;
-  location: string;
-  stories: number;
-  pool: boolean;
-  garage: number;
-  isPrivate: boolean;
-  antiquity: number;
-  internet: boolean;
-  ac: boolean;
-  heat: boolean;
-  gas: boolean;
-  more: string;
-  category: string;
-  operationType: string;
-  rooms: string;
-  showPrice: boolean;
-  coveredMeters: number;
-  totalMenters: number; // Note: Check if this should be 'totalMeters'
-  price: number;
-  images: string[];
-  bedrooms: number;
-  bathrooms: number;
-  available: boolean;
-  interestedUsers: any[];
-}
+import { useRouter } from 'next/navigation';
+import Loader from '../components/Loader';
+import { FaEye, FaTrash, FaPen } from 'react-icons/fa';
+import { Property } from '@/lib/types/types';
+import { toast } from 'react-toastify';
+
 const Admin = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [openMoreInfoModal, setOpenMoreInfoModal] = useState(false);
@@ -50,13 +30,23 @@ const Admin = () => {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(
     null
   );
+  const [isLoading, setIsloading] = useState(true);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const notify = (string: string) =>
+    toast(string, { theme: 'dark', hideProgressBar: true });
+  const router = useRouter();
   useEffect(() => {
     (async () => {
+      setIsloading(true);
       try {
         const { data } = await axios.get('/api/listProperties');
         setProperties(data.properties);
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsloading(false);
+      }
     })();
   }, []);
 
@@ -70,7 +60,7 @@ const Admin = () => {
       <Td>
         <Flex alignItems='center' gap='4px'>
           {interestedPeople?.[0]?.fullName || 'N/A'}
-          {interestedPeople.length > 0 && (
+          {!!interestedPeople.length && (
             <BiPlusCircle
               cursor='pointer'
               size='20px'
@@ -86,6 +76,42 @@ const Admin = () => {
     setSelectedProperty(property);
     onOpen();
   };
+
+  const navigate = (path: string) => {
+    router.push(path);
+  };
+
+  const showAlert = (id: string, title: string) => {
+    confirmAlert({
+      title: `Confirmar para eliminar ${title}`,
+      message: 'Estás seguro/a?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: () => removeProperty(id)
+        },
+        {
+          label: 'No'
+        }
+      ]
+    });
+  };
+
+  const removeProperty = async (id: string) => {
+    try {
+      setIsloading(true);
+      await axios.delete(`/api/deleteProperty/${id}`);
+      const { data } = await axios.get('/api/listProperties');
+      notify('Propiedad eliminada');
+      setProperties(data.properties);
+    } catch (error) {
+      console.log(error);
+      notify('Oops! Algo salió mal');
+    } finally {
+      setIsloading(false);
+    }
+  };
+
   return (
     <>
       <AdminModal
@@ -98,54 +124,88 @@ const Admin = () => {
         onClose={onClose}
         property={selectedProperty}
       />
-      <Box>
-        <Box overflowX='auto'>
-          <Table whiteSpace='nowrap' layout='auto'>
-            <Thead>
-              <Tr>
-                <Th>Propiedad</Th>
-                <Th>Metros Totales</Th>
-                <Th>Metros Cubiertos</Th>
-                <Th>Interesados</Th>
-                <Th>Precio</Th>
-                <Th>Categoría</Th>
-                <Th>Tipo de Operación</Th>
-                <Th>Habitaciones</Th>
-                <Th>Dormitorios</Th>
-                <Th>Baños</Th>
-                <Th>Disponible</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {properties?.map((prop, i) => {
-                return (
-                  <Tr key={i}>
-                    <Td>{prop.title}</Td>
-                    <Td>{prop.totalMenters} m2</Td>
-                    <Td>{prop.coveredMeters} m2</Td>
-                    <CustomCell interestedPeople={prop.interestedUsers} />
-                    <Td>U$D{prop.price}</Td>
-                    <Td>{prop.category}</Td>
-                    <Td>{prop.operationType}</Td>
-                    <Td>{prop.rooms}</Td>
-                    <Td>{prop.bedrooms}</Td>
-                    <Td>{prop.bathrooms}</Td>
-                    <Td>{prop.available ? 'Si' : 'No'}</Td>
-                    <Td>
-                      <Button
-                        colorScheme='blue'
-                        onClick={() => handleOpenModal(prop)}
-                      >
-                        Ver Más
-                      </Button>
-                    </Td>
-                  </Tr>
-                );
-              })}
-            </Tbody>
-          </Table>
+      {isLoading ? (
+        <Box
+          display='flex'
+          alignItems='center'
+          justifyContent='center'
+          minH='550px'
+        >
+          <Loader />
         </Box>
-      </Box>
+      ) : (
+        <Box>
+          <Box overflowX='auto'>
+            <Table whiteSpace='nowrap' layout='auto'>
+              <Thead>
+                <Tr>
+                  <Th>Propiedad</Th>
+                  <Th>Metros Totales</Th>
+                  <Th>Metros Cubiertos</Th>
+                  <Th>Interesados</Th>
+                  <Th>Precio (U$D)</Th>
+                  <Th>Tipo de vivienda</Th>
+                  <Th>Tipo de Operación</Th>
+                  <Th>Habitaciones</Th>
+                  <Th>Dormitorios</Th>
+                  <Th>Baños</Th>
+                  <Th>Disponible</Th>
+                  <Th textAlign='center'>
+                    <Button
+                      colorScheme='blue'
+                      onClick={() => navigate('/create-property')}
+                    >
+                      +
+                    </Button>
+                  </Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {properties?.map((prop, i) => {
+                  return (
+                    <Tr key={i}>
+                      <Td>{prop.title}</Td>
+                      <Td>{prop.totalMeters} m2</Td>
+                      <Td>{prop.coveredMeters} m2</Td>
+                      <CustomCell interestedPeople={prop.interestedUsers} />
+                      <Td>{prop.price?.toLocaleString()}</Td>
+                      <Td>{prop.category}</Td>
+                      <Td>{prop.operationType}</Td>
+                      <Td>{prop.rooms}</Td>
+                      <Td>{prop.bedrooms}</Td>
+                      <Td>{prop.bathrooms}</Td>
+                      <Td>{prop.available ? 'Si' : 'No'}</Td>
+                      <Td>
+                        <Flex gap='8px'>
+                          <Button
+                            colorScheme='green'
+                            onClick={() => handleOpenModal(prop)}
+                          >
+                            <FaEye />
+                          </Button>
+                          <Button
+                            colorScheme='red'
+                            onClick={() => showAlert(prop._id, prop.title)}
+                          >
+                            <FaTrash />
+                          </Button>
+                          <Button
+                            onClick={() =>
+                              router.push(`/admin/edit/${prop._id}`)
+                            }
+                          >
+                            <FaPen />
+                          </Button>
+                        </Flex>
+                      </Td>
+                    </Tr>
+                  );
+                })}
+              </Tbody>
+            </Table>
+          </Box>
+        </Box>
+      )}
     </>
   );
 };

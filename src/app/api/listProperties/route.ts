@@ -1,6 +1,8 @@
 import connectToDatabase from '@/lib/mongodb';
 import Property from '../addUserToProperty/Property';
 
+require('../createUser/User');
+
 export async function GET(request: Request) {
   try {
     await connectToDatabase();

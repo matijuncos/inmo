@@ -22,77 +22,15 @@ import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Loader from '../components/Loader';
-
-enum directions {
-  left = 'left',
-  right = 'right',
-  up = 'up',
-  down = 'down'
-}
-
-interface Property {
-  _id: string;
-  title: string;
-  location: string;
-  stories: number;
-  pool: boolean;
-  garage: number;
-  isPrivate: boolean;
-  antiquity: number;
-  internet: boolean;
-  ac: boolean;
-  heat: boolean;
-  gas: boolean;
-  more: string;
-  category: string;
-  operationType: string;
-  rooms: string;
-  showPrice: boolean;
-  coveredMeters: number;
-  totalMenters: number; // Note: Check if this should be 'totalMeters'
-  price: number;
-  images: string[];
-  bedrooms: number;
-  bathrooms: number;
-  available: boolean;
-  interestedUsers: any[];
-}
-
-interface Customer {
-  fullName: string;
-  email: string;
-}
-const defaultProperty = {
-  _id: 'last',
-  title: 'last',
-  location: 'last',
-  stories: 0,
-  pool: false,
-  garage: 0,
-  isPrivate: false,
-  antiquity: 0,
-  internet: false,
-  ac: false,
-  heat: false,
-  gas: false,
-  more: 'last',
-  category: 'last',
-  operationType: 'last',
-  rooms: 'last',
-  showPrice: false,
-  coveredMeters: 0,
-  totalMenters: 0, // Note: Check if this should be 'totalMeters'
-  price: 0,
-  images: ['/placeholder.webp'],
-  bedrooms: 0,
-  bathrooms: 0,
-  available: false,
-  interestedUsers: []
-};
+import { mailTemplate, mailTemplateTwo } from './utils';
+import { Customer, Property, directions } from '@/lib/types/types';
+import { defaultProperty } from './config';
+import { FaBath, FaBed } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 export default function Home() {
   const [db, setDb] = useState<Property[] | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(
     db && Array.isArray(db) ? db.length - 1 : 0
   );
@@ -110,7 +48,8 @@ export default function Home() {
         .map((i) => React.createRef()),
     [db?.length]
   );
-
+  const notify = (string: string) =>
+    toast(string, { theme: 'dark', hideProgressBar: true });
   const getAllProperties = async () => {
     setLoading(true);
     try {
@@ -145,7 +84,9 @@ export default function Home() {
     if (decodedToken && 'exp' in decodedToken && decodedToken.exp) {
       const isExpired = decodedToken.exp * 1000 < Date.now();
       if (isExpired) {
-        localStorage.removeItem('jwt');
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('user');
         router.push('/');
       }
     }
@@ -182,18 +123,11 @@ export default function Home() {
           axios.post('/api/emailSender', {
             name: customer?.fullName,
             email: customer?.email,
-            message: `
-            <div style="font-family: 'Helvetica Neue', Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; background-color: #fff; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-  <h1 style="color: #2c3e50; font-size: 28px; text-align: center;">¡Hola ${customer?.fullName}!</h1>
-  <p style="font-size: 18px; line-height: 1.6; color: #7f8c8d; text-align: justify;">Gracias por tu interés en nuestra propiedad: <strong style="color: #2980b9;">${property.title}</strong>.</p>
-  <p style="font-size: 18px; line-height: 1.6; color: #7f8c8d; text-align: justify;">Creemos que esta propiedad podría ser perfecta para ti, ¡y estamos emocionados de poder ofrecértela!</p>
-  <p style="font-size: 18px; line-height: 1.6; color: #7f8c8d; text-align: justify;">Un representante se pondrá en contacto contigo pronto para responder a cualquier pregunta y brindarte más información.</p>
-  <p style="font-size: 18px; line-height: 1.6; color: #7f8c8d; text-align: justify;">¡Gracias de nuevo por tu interés!</p>
-  <p style="font-size: 18px; line-height: 1.6; color: #2c3e50; text-align: center; font-weight: bold;">El equipo de [Nombre de tu Empresa]</p>
-</div>
-          `
+            message: mailTemplate(property.title, customer?.fullName || ''),
+            message2: mailTemplateTwo(property.title, customer?.fullName || '')
           })
         ]);
+        notify('Matcheaste con una propiedad! ♥️');
         setDb((prevDb) => {
           if (!prevDb) return prevDb;
           return prevDb.map((p) => {
@@ -207,6 +141,7 @@ export default function Home() {
           });
         });
       } catch (error) {
+        notify('Oops! Algo salió mal');
         console.log(error);
       }
     }
@@ -258,14 +193,12 @@ export default function Home() {
   };
 
   const hasMainFeatures =
-    (db?.[currentIndex]?.totalMenters ||
+    (db?.[currentIndex]?.totalMeters ||
       db?.[currentIndex]?.operationType ||
       db?.[currentIndex]?.bathrooms ||
       db?.[currentIndex]?.rooms ||
       db?.[currentIndex]?.bedrooms) &&
     db?.[currentIndex]?._id !== 'last';
-
-  console.log(userId);
 
   return (
     <main>
@@ -290,140 +223,154 @@ export default function Home() {
             onClose={() => setIsInfoModalOpen(false)}
             isOpen={isInfoModalOpen}
           />
-          <div className='flex'>
-            <div className='cardContainer'>
-              {db?.map((character, index) => (
-                <TinderCard
-                  ref={childRefs[index] as React.RefObject<any>}
-                  className='swipe'
-                  key={character.title}
-                  preventSwipe={
-                    hasMainFeatures
-                      ? [directions.up, directions.down]
-                      : [
-                          directions.up,
-                          directions.down,
-                          directions.left,
-                          directions.right
-                        ]
-                  }
-                  swipeRequirementType='position'
-                  onSwipe={(dir) =>
-                    swiped(dir, character.title, index, character)
-                  }
-                  onCardLeftScreen={() => outOfFrame(character.title, index)}
-                >
-                  <div
-                    style={{
-                      backgroundImage: 'url(' + character.images[0] + ')'
-                    }}
-                    className='card'
-                  >
-                    {character.interestedUsers.some(
-                      (user) => user._id === userId
-                    ) && (
-                      <Box
-                        border='solid 6px green'
-                        borderRadius='16px'
-                        backgroundColor='white'
-                        p='8px'
-                        position='absolute'
-                        top={'62px'}
-                        right={'14px'}
-                        transform='rotate(30deg)'
-                        boxShadow='4px 4px 12px rgba(0, 0, 0, 0.3)'
-                        color='green'
-                        fontWeight={700}
-                        fontSize='24px'
-                      >
-                        <Text>Le diste Like!</Text>
-                      </Box>
-                    )}
-                    {hasMainFeatures && <h3>{character.title}</h3>}
-                    {hasMainFeatures && (
-                      <div
-                        className='card-more-info'
-                        onClick={() => setIsInfoModalOpen(true)}
-                      >
-                        <BiInfoCircle color='rgb(40, 35, 97)' />
-                        <Text>Ver información</Text>
-                      </div>
-                    )}
-                  </div>
-                </TinderCard>
-              ))}
-            </div>
-            <br />
-            <div className='buttons-container'>
-              <button
-                className='button button-undo'
-                disabled={!canGoBack}
-                style={{ backgroundColor: !canGoBack ? '#c3c4d3' : '' }}
-                onClick={() => goBack()}
-              >
-                <FaArrowRotateLeft size={24} color='#886602' />
-              </button>
-              {hasMainFeatures && (
-                <>
-                  <button
-                    className='button button-left'
-                    disabled={!canSwipe}
-                    style={{ backgroundColor: !canSwipe ? '#c3c4d3' : '' }}
-                    onClick={() => swipe(directions.left)}
-                  >
-                    <FaThumbsDown size={24} color='#BB2D3E' />
-                  </button>
-                  <button
-                    className='button button-right'
-                    disabled={!canSwipe}
-                    style={{ backgroundColor: !canSwipe ? '#c3c4d3' : '' }}
-                    onClick={() => swipe(directions.right)}
-                  >
-                    <FaThumbsUp size={24} color='rgb(10,101,0)' />
-                  </button>
-                </>
-              )}
-            </div>
-            {!!db?.[currentIndex]?.images?.length && hasMainFeatures && (
-              <Box my='16px'>
-                <Carousel
-                  images={db?.[currentIndex]?.images}
-                  setIsModalOpen={setIsModalOpen}
-                  setSelectedImage={setSelectedImage}
-                />
-              </Box>
-            )}
-            <div className='info-container'>
-              {hasMainFeatures ? (
-                <div className='description'>
-                  <IconAndData
-                    Icon={FaHouse}
-                    textValue={
-                      'Baños: ' + db?.[currentIndex]?.bathrooms.toString()
+          {localStorage.getItem('token') && (
+            <div className='flex'>
+              <div className='cardContainer'>
+                {db?.map((character, index) => (
+                  <TinderCard
+                    ref={childRefs[index] as React.RefObject<any>}
+                    className='swipe'
+                    key={character.title}
+                    preventSwipe={
+                      hasMainFeatures
+                        ? [directions.up, directions.down]
+                        : [
+                            directions.up,
+                            directions.down,
+                            directions.left,
+                            directions.right
+                          ]
                     }
-                  />
-                  <IconAndData
-                    Icon={FaHouse}
-                    textValue={
-                      'Ambientes: ' + db?.[currentIndex]?.rooms.toString()
+                    swipeRequirementType='position'
+                    onSwipe={(dir) =>
+                      swiped(dir, character.title, index, character)
                     }
-                  />
-                  <IconAndData
-                    Icon={FaHouse}
-                    textValue={
-                      'Dormitorios: ' + db?.[currentIndex]?.bedrooms.toString()
-                    }
-                  />
-                </div>
-              ) : (
+                    onCardLeftScreen={() => outOfFrame(character.title, index)}
+                  >
+                    <Box
+                      boxShadow='xl'
+                      style={{
+                        backgroundImage: 'url(' + character.images[0] + ')'
+                      }}
+                      className='card'
+                    >
+                      {character.interestedUsers.some(
+                        (user) => user._id === userId
+                      ) && (
+                        <Box
+                          border='solid 6px green'
+                          borderRadius='16px'
+                          backgroundColor='white'
+                          p='8px'
+                          position='absolute'
+                          top={'62px'}
+                          right={'14px'}
+                          transform='rotate(30deg)'
+                          boxShadow='4px 4px 4px rgba(0, 0, 0, 0.3)'
+                          color='green'
+                          fontWeight={700}
+                          fontSize='24px'
+                        >
+                          <Text>Le diste Like!</Text>
+                        </Box>
+                      )}
+                      {hasMainFeatures && (
+                        <Flex className='flex-in-card' boxShadow='xl'>
+                          <Text
+                            as='h3'
+                            color='#EF9C66'
+                            fontSize='20px'
+                            fontWeight={600}
+                          >
+                            {character.title}
+                          </Text>
+                          <div
+                            className='card-more-info'
+                            onClick={() => setIsInfoModalOpen(true)}
+                          >
+                            <BiInfoCircle size={20} color='#223150' />
+                            <Text>Ver información</Text>
+                          </div>
+                        </Flex>
+                      )}
+                    </Box>
+                  </TinderCard>
+                ))}
+              </div>
+              <br />
+              {!hasMainFeatures && (
                 <Box m='auto'>
-                  <Text fontSize='32px' fontWeight={600} mt='16px'>
-                    Llegaste al final!
+                  <Text fontSize='24px' fontWeight={600} mt='16px'>
+                    Pronto tendremos más propiedades.
                   </Text>
                 </Box>
               )}
+              <div className='buttons-container'>
+                <button
+                  className='button button-undo'
+                  disabled={!canGoBack}
+                  style={{ backgroundColor: !canGoBack ? '#c3c4d3' : '' }}
+                  onClick={() => goBack()}
+                >
+                  <FaArrowRotateLeft size={24} color='#886602' />
+                </button>
+                {hasMainFeatures && (
+                  <>
+                    <button
+                      className='button button-left'
+                      disabled={!canSwipe}
+                      style={{ backgroundColor: !canSwipe ? '#c3c4d3' : '' }}
+                      onClick={() => swipe(directions.left)}
+                    >
+                      <FaThumbsDown size={24} color='#BB2D3E' />
+                    </button>
+                    <button
+                      className='button button-right'
+                      disabled={!canSwipe}
+                      style={{ backgroundColor: !canSwipe ? '#c3c4d3' : '' }}
+                      onClick={() => swipe(directions.right)}
+                    >
+                      <FaThumbsUp size={24} color='rgb(10,101,0)' />
+                    </button>
+                  </>
+                )}
+              </div>
+              <div className='info-container'>
+                {hasMainFeatures && (
+                  <div className='description'>
+                    <IconAndData
+                      Icon={FaBath}
+                      textValue={
+                        'Baños: ' + db?.[currentIndex]?.bathrooms?.toString()
+                      }
+                    />
+                    <IconAndData
+                      Icon={FaHouse}
+                      textValue={
+                        'Ambientes: ' + db?.[currentIndex]?.rooms?.toString()
+                      }
+                    />
+                    <IconAndData
+                      Icon={FaBed}
+                      textValue={
+                        'Dormitorios: ' +
+                        db?.[currentIndex]?.bedrooms?.toString()
+                      }
+                    />
+                  </div>
+                )}
+              </div>
+              {!!db?.[currentIndex]?.images?.length && hasMainFeatures && (
+                <Box my='16px'>
+                  <Carousel
+                    images={db?.[currentIndex]?.images}
+                    setIsModalOpen={setIsModalOpen}
+                    setSelectedImage={setSelectedImage}
+                  />
+                </Box>
+              )}
             </div>
-          </div>
+          )}
         </div>
       )}
     </main>

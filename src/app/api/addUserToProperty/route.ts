@@ -15,7 +15,6 @@ export async function POST(request: Request) {
         { status: 404 }
       );
     }
-    // Check if userId already exists in the interestedUsers array
     if (!property.interestedUsers.includes(userId)) {
       property.interestedUsers.push(userId);
       await property.save();

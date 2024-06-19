@@ -1,3 +1,4 @@
+import { Text } from '@chakra-ui/react';
 import { FunctionComponent } from 'react';
 
 const IconAndData = ({
@@ -10,7 +11,7 @@ const IconAndData = ({
   return (
     <div className='icon-data'>
       <Icon />
-      <span>{textValue}</span>
+      <Text fontSize={14}>{textValue}</Text>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import User from '../createUser/User';
+require('../createUser/User');
 const propertySchema = new mongoose.Schema({
   title: String,
   location: String,
@@ -18,7 +18,7 @@ const propertySchema = new mongoose.Schema({
   rooms: String,
   showPrice: Boolean,
   coveredMeters: Number,
-  totalMenters: Number,
+  totalMeters: Number,
   price: Number,
   images: [String],
   bedrooms: Number,

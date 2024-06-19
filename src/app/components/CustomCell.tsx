@@ -13,7 +13,6 @@ const CustomCell = ({
   const handleClick = (interestedPeolple: any) => {
     setInterestedPeople(interestedPeolple);
     setOpenMoreInfoModal(true);
-    console.log(interestedPeolple);
   };
   return (
     <Td>

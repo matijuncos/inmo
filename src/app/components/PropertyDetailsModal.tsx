@@ -15,9 +15,7 @@ import {
   Text,
   Image,
   Heading,
-  Stack,
   Badge,
-  VStack,
   HStack,
   Icon
 } from '@chakra-ui/react';
@@ -33,38 +31,7 @@ import {
   FaBed,
   FaBath
 } from 'react-icons/fa';
-
-interface Property {
-  title: string;
-  location: string;
-  price: number;
-  stories: number;
-  pool: boolean;
-  garage: number;
-  isPrivate: boolean;
-  antiquity: number;
-  internet: boolean;
-  ac: boolean;
-  heat: boolean;
-  gas: boolean;
-  more: string;
-  category: string;
-  operationType: string;
-  rooms: string;
-  showPrice: boolean;
-  coveredMeters: number;
-  totalMenters: number;
-  bedrooms: number;
-  bathrooms: number;
-  available: boolean;
-  images: string[];
-}
-
-interface PropertyDetailsModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  property: Property | null;
-}
+import { PropertyDetailsModalProps } from '@/lib/types/types';
 
 const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
   isOpen,
@@ -191,7 +158,7 @@ const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
                     icon={FaMapMarkerAlt}
                   />
                   <DetailItem
-                    label='Categoría'
+                    label='Tipo de vivienda'
                     value={property.category}
                     icon={FaMapMarkerAlt}
                   />
@@ -212,7 +179,7 @@ const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
                   />
                   <DetailItem
                     label='Metros Totales'
-                    value={property.totalMenters}
+                    value={property.totalMeters}
                     icon={FaMapMarkerAlt}
                   />
                   <DetailItem
@@ -234,7 +201,7 @@ const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
               </Grid>
             </GridItem>
             <GridItem>
-              <Flex wrap='wrap' gap={6} justifyContent='center'>
+              <Flex wrap='wrap' gap={4} justifyContent='flex-start'>
                 {!!property.images?.length &&
                   property.images.map((img, index) => (
                     <Box
@@ -255,9 +222,6 @@ const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
                         width='100%'
                         height='100%'
                         objectFit='cover'
-                        onError={(e: any) =>
-                          (e.currentTarget.src = 'path_to_default_image.jpg')
-                        }
                       />
                     </Box>
                   ))}

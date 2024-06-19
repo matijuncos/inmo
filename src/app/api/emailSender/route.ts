@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { name, email, message } = body;
+  const { name, email, message, message2 } = body;
   const userEmail = process.env.EMAIL;
   const userPassword = process.env.PASSWORD;
   try {
@@ -13,16 +13,18 @@ export async function POST(request: Request) {
         pass: userPassword
       }
     });
-    console.log({
-      user: userEmail,
-      pass: userPassword
-    });
-
     const mail = await transporter.sendMail({
-      from: 'matijuncos@gmail.com',
+      from: process.env.MY_EMAIL,
       to: email,
       subject: `${name} Matcheaste con una propiedad!`,
       html: `<b>${message}</b>`
+    });
+
+    const mail2 = await transporter.sendMail({
+      from: process.env.MY_EMAIL,
+      to: process.env.MY_EMAIL,
+      subject: `A ${name} le interesa una propiedad!`,
+      html: `<b>${message2}</b>`
     });
     console.log('Message sent: %s', mail.messageId);
 

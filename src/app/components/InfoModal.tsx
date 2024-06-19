@@ -2,39 +2,33 @@ import React from 'react';
 import {
   Box,
   CloseButton,
+  Flex,
   Modal,
   ModalContent,
-  ModalOverlay
+  ModalHeader,
+  ModalOverlay,
+  Text
 } from '@chakra-ui/react';
 import IconAndData from './IconAndData';
-import { FaHouse } from 'react-icons/fa6';
-interface Property {
-  _id: string;
-  title: string;
-  location: string;
-  stories: number;
-  pool: boolean;
-  garage: number;
-  isPrivate: boolean;
-  antiquity: number;
-  internet: boolean;
-  ac: boolean;
-  heat: boolean;
-  gas: boolean;
-  more: string;
-  category: string;
-  operationType: string;
-  rooms: string;
-  showPrice: boolean;
-  coveredMeters: number;
-  totalMenters: number; // Note: Check if this should be 'totalMeters'
-  price: number;
-  images: string[];
-  bedrooms: number;
-  bathrooms: number;
-  available: boolean;
-  interestedUsers: any[];
-}
+import {
+  FaRulerCombined,
+  FaBath,
+  FaDoorOpen,
+  FaBed,
+  FaBuilding,
+  FaCar,
+  FaCalendarAlt,
+  FaWifi,
+  FaSnowflake,
+  FaFire,
+  FaBurn,
+  FaTags,
+  FaHandshake,
+  FaDollarSign,
+  FaCheckCircle
+} from 'react-icons/fa';
+import { Property } from '@/lib/types/types';
+
 const InfoModal = ({
   isOpen,
   onClose,
@@ -54,7 +48,12 @@ const InfoModal = ({
     >
       <ModalOverlay>
         <ModalContent maxW='95vw' w='1084px' m='0 auto' maxH='95vh'>
-          <CloseButton outline='none' marginLeft='auto' onClick={onClose} />
+          <ModalHeader>
+            <Flex>
+              Caraterísticas
+              <CloseButton outline='none' marginLeft='auto' onClick={onClose} />
+            </Flex>
+          </ModalHeader>
           <div
             style={{
               padding: '16px',
@@ -65,76 +64,82 @@ const InfoModal = ({
               gap: '20px' // Adds space between the columns
             }}
           >
+            {information?.showPrice && (
+              <IconAndData
+                Icon={FaDollarSign} // Icon for price
+                textValue={'Precio: U$D' + information?.price?.toString()}
+              />
+            )}
             <IconAndData
-              Icon={FaHouse}
+              Icon={FaRulerCombined} // Icon for total meters
               textValue={
-                'Metros totales: ' + information?.totalMenters.toString()
+                'Metros totales: ' + information?.totalMeters?.toString()
               }
             />
             <IconAndData
-              Icon={FaHouse}
-              textValue={'Baños: ' + information?.bathrooms.toString()}
+              Icon={FaBath} // Icon for bathrooms
+              textValue={'Baños: ' + information?.bathrooms?.toString()}
             />
             <IconAndData
-              Icon={FaHouse}
-              textValue={'Ambientes: ' + information?.rooms.toString()}
+              Icon={FaDoorOpen} // Icon for rooms
+              textValue={'Ambientes: ' + information?.rooms?.toString()}
             />
             <IconAndData
-              Icon={FaHouse}
-              textValue={'Dormitorios: ' + information?.bedrooms.toString()}
+              Icon={FaBed} // Icon for bedrooms
+              textValue={'Dormitorios: ' + information?.bedrooms?.toString()}
             />
             <IconAndData
-              Icon={FaHouse}
-              textValue={'Plantas: ' + information?.stories.toString()}
+              Icon={FaBuilding} // Icon for stories
+              textValue={'Plantas: ' + information?.stories?.toString()}
             />
             <IconAndData
-              Icon={FaHouse}
-              textValue={'Garaje: ' + information?.garage.toString()}
+              Icon={FaCar} // Icon for garage
+              textValue={'Garaje: ' + information?.garage?.toString()}
             />
             <IconAndData
-              Icon={FaHouse}
+              Icon={FaCalendarAlt} // Icon for antiquity
               textValue={
-                'Antigüedad: ' + information?.antiquity.toString() + ' años'
+                'Antigüedad: ' + information?.antiquity?.toString() + ' años'
               }
             />
             <IconAndData
-              Icon={FaHouse}
+              Icon={FaWifi} // Icon for internet
               textValue={'Internet: ' + (information?.internet ? 'Sí' : 'No')}
             />
             <IconAndData
-              Icon={FaHouse}
+              Icon={FaSnowflake} // Icon for air conditioning
               textValue={
                 'Aire Acondicionado: ' + (information?.ac ? 'Sí' : 'No')
               }
             />
             <IconAndData
-              Icon={FaHouse}
+              Icon={FaFire} // Icon for heating
               textValue={'Calefacción: ' + (information?.heat ? 'Sí' : 'No')}
             />
             <IconAndData
-              Icon={FaHouse}
+              Icon={FaBurn} // Icon for gas
               textValue={'Gas: ' + (information?.gas ? 'Sí' : 'No')}
             />
             <IconAndData
-              Icon={FaHouse}
-              textValue={'Categoría: ' + information?.category}
+              Icon={FaTags} // Icon for category
+              textValue={'Tipo de vivienda: ' + information?.category}
             />
             <IconAndData
-              Icon={FaHouse}
+              Icon={FaHandshake} // Icon for operation type
               textValue={'Tipo de Operación: ' + information?.operationType}
             />
+
             <IconAndData
-              Icon={FaHouse}
-              textValue={'Precio: $' + information?.price.toString()}
-            />
-            <IconAndData
-              Icon={FaHouse}
+              Icon={FaCheckCircle} // Icon for availability
               textValue={
                 'Disponible: ' + (information?.available ? 'Sí' : 'No')
               }
             />
           </div>
-          <Box p='16px'>{information?.more}</Box>
+          <Box p='16px'>
+            <Text fontWeight={600}>Mas detalles:</Text>
+            {information?.more}
+          </Box>
         </ModalContent>
       </ModalOverlay>
     </Modal>
