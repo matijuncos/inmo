@@ -15,9 +15,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-export const config = {
-  api: {
-    bodyParser: false // Disallow body parsing, since we're handling it with formData
-  }
-};

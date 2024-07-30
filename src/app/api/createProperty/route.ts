@@ -1,6 +1,7 @@
 import connectToDatabase from '@/lib/mongodb';
 import Property from '../addUserToProperty/Property';
 import axios from 'axios';
+import { authenticate } from '@/lib/authenticate';
 require('../createUser/User');
 export async function POST(request: Request) {
   const body = await request.json();
@@ -31,6 +32,17 @@ export async function POST(request: Request) {
   } = body;
   try {
     await connectToDatabase();
+    const admin = await authenticate(request);
+    if (!admin) {
+      return Response.json(
+        {
+          message: 'No autorizado'
+        },
+        {
+          status: 401
+        }
+      );
+    }
     if (!title || !location || !price || !images || !bedrooms || !bathrooms) {
       return Response.json({ message: 'Missing properties' }, { status: 400 });
     }

@@ -13,6 +13,8 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import Loader from '../components/Loader';
 
 export default function Home() {
   const [email, setEmail] = useState('');
@@ -20,9 +22,11 @@ export default function Home() {
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const router = useRouter();
-
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const handleLogin = async () => {
     try {
+      setLoading(true);
       const res = await axios.post('/api/createUser', {
         email,
         password,
@@ -30,7 +34,7 @@ export default function Home() {
         phone
       });
       if (res.status === 201) {
-        router.push('/home');
+        router.push('/match');
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('userId', res.data.user._id);
         localStorage.setItem(
@@ -41,9 +45,11 @@ export default function Home() {
           })
         );
       }
-    } catch (error) {
+    } catch (error: any) {
+      setErrorMessage(error.response.data.message);
       console.log(error);
     } finally {
+      setLoading(false);
     }
   };
 
@@ -54,7 +60,7 @@ export default function Home() {
         height='100%'
         alignItems='center'
         justifyContent='center'
-        bg={useColorModeValue('gray.50', 'gray.800')}
+        p={6}
       >
         <Box
           maxW='md'
@@ -64,47 +70,58 @@ export default function Home() {
           rounded='lg'
           p={6}
         >
-          <Heading as='h2' size='lg' textAlign='center' mb={6}>
-            Registrate
-          </Heading>
-          <Stack spacing={4}>
-            <FormControl id='fullName'>
-              <FormLabel>Nombre Completo</FormLabel>
-              <Input
-                onChange={(e) => setFullName(e.target.value)}
-                type='text'
-              />
-            </FormControl>
-            <FormControl id='phone'>
-              <FormLabel>Teléfono</FormLabel>
-              <Input onChange={(e) => setPhone(e.target.value)} type='tel' />
-            </FormControl>
-            <FormControl id='email'>
-              <FormLabel>Dirección de correo electrónico</FormLabel>
-              <Input onChange={(e) => setEmail(e.target.value)} type='email' />
-            </FormControl>
-            <FormControl id='password'>
-              <FormLabel>Contraseña</FormLabel>
-              <Input
-                onChange={(e) => setPassword(e.target.value)}
-                type='password'
-              />
-            </FormControl>
-            <Button
-              onClick={handleLogin}
-              colorScheme='teal'
-              size='lg'
-              fontSize='md'
-            >
-              Registrate
-            </Button>
-          </Stack>
-          <Text mt={4} textAlign='center'>
-            {`No tenés cuenta?`}{' '}
-            <a href='/' style={{ color: 'teal' }}>
-              Inicià sesiòn
-            </a>
-          </Text>
+          {loading ? (
+            <Box m='auto' display='grid' placeItems='center'>
+              <Loader />
+            </Box>
+          ) : (
+            <>
+              <Heading as='h2' size='lg' textAlign='center' mb={6}>
+                Registrate
+              </Heading>
+              <Stack spacing={4}>
+                <FormControl id='fullName'>
+                  <FormLabel>Nombre Completo</FormLabel>
+                  <Input
+                    onChange={(e) => setFullName(e.target.value)}
+                    type='text'
+                  />
+                </FormControl>
+                <FormControl id='phone'>
+                  <FormLabel>Teléfono</FormLabel>
+                  <Input
+                    onChange={(e) => setPhone(e.target.value)}
+                    type='tel'
+                  />
+                </FormControl>
+                <FormControl id='email'>
+                  <FormLabel>Dirección de correo electrónico</FormLabel>
+                  <Input
+                    onChange={(e) => setEmail(e.target.value)}
+                    type='email'
+                  />
+                </FormControl>
+                <FormControl id='password'>
+                  <FormLabel>Contraseña</FormLabel>
+                  <Input
+                    onChange={(e) => setPassword(e.target.value)}
+                    type='password'
+                  />
+                </FormControl>
+                {errorMessage && (
+                  <Text fontSize={12} color='red'>
+                    {errorMessage}
+                  </Text>
+                )}
+                <Button onClick={handleLogin} size='lg' fontSize='md'>
+                  Registrate
+                </Button>
+              </Stack>
+              <Text mt={4} textAlign='center'>
+                {`Ya tenés cuenta?`} <Link href='/login'>Inicià sesiòn</Link>
+              </Text>
+            </>
+          )}
         </Box>
       </Box>
     </main>

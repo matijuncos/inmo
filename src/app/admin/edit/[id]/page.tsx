@@ -15,10 +15,18 @@ import {
   VStack,
   Heading,
   Container,
-  Text
+  Text,
+  Flex,
+  Image,
+  IconButton,
+  Link
 } from '@chakra-ui/react';
 import { toast } from 'react-toastify';
 import { confirmAlert } from 'react-confirm-alert';
+import { BiTrash } from 'react-icons/bi';
+import { useDropzone } from 'react-dropzone';
+import { FaArrowLeft, FaImage } from 'react-icons/fa';
+import { jwtDecode } from 'jwt-decode';
 
 const EditProperty = () => {
   const { id } = useParams();
@@ -27,6 +35,40 @@ const EditProperty = () => {
     toast(string, { theme: 'dark', hideProgressBar: true });
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [allFiles, setFiles] = useState<File[]>([]);
+
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: { 'image/*': [] },
+    onDrop: (acceptedFiles) => {
+      setFiles((prevFiles) => [
+        ...prevFiles,
+        ...acceptedFiles.map((file) =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file)
+          })
+        )
+      ]);
+    }
+  });
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
+    const decodedToken = jwtDecode(token);
+    if (decodedToken && 'exp' in decodedToken && decodedToken.exp) {
+      const isExpired = decodedToken.exp * 1000 < Date.now();
+      if (isExpired) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('user');
+        router.push('/login');
+      }
+    }
+  }, [router]);
 
   useEffect(() => {
     if (id) {
@@ -44,9 +86,35 @@ const EditProperty = () => {
     }
   }, [id]);
 
+  const toBase64 = (file: File) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const result = reader.result as string;
+        const base64Data = result.split(',')[1];
+        resolve(base64Data);
+      };
+      reader.onerror = (error) => reject(error);
+    });
+
   const updateProperty = async () => {
+    const token = localStorage.getItem('token');
+    setLoading(true);
+    const base64Images = await Promise.all(allFiles.map(toBase64));
     try {
-      const { data } = await axios.put('/api/updateProperty', property);
+      const { data } = await axios.put(
+        '/api/updateProperty',
+        {
+          ...property,
+          newFiles: base64Images
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
       if (data.success) {
         router.push('/admin');
         notify('Propiedad actualizada! 🙌🏼');
@@ -54,6 +122,8 @@ const EditProperty = () => {
     } catch (error) {
       console.log(error);
       notify('Oops! Algo salió mal.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,6 +143,53 @@ const EditProperty = () => {
     });
   };
 
+  const removeFile = (file: any) => {
+    if (allFiles.some((f) => (f as any).preview === file)) {
+      setFiles((prevFiles) =>
+        prevFiles.filter((f) => (f as any).preview !== file)
+      );
+    } else {
+      setProperty((prevProperty) => {
+        if (!prevProperty) return null;
+        return {
+          ...prevProperty,
+          images: prevProperty.images.filter((image) => image !== file)
+        };
+      });
+    }
+  };
+
+  const newFilePreview = allFiles.map((file) => (file as any).preview);
+
+  const filesPreview = [...(property?.images || []), ...newFilePreview].map(
+    (file) => (
+      <Flex
+        key={file}
+        align='center'
+        justify='space-between'
+        p={2}
+        position='relative'
+      >
+        <Image
+          src={file as any}
+          alt={file}
+          boxSize='100px'
+          objectFit='cover'
+          borderRadius='8px'
+        />
+        <IconButton
+          position='absolute'
+          top={'-8px'}
+          right={'-8px'}
+          borderRadius='100%'
+          aria-label='Delete image'
+          icon={<BiTrash />}
+          onClick={() => removeFile(file)}
+        />
+      </Flex>
+    )
+  );
+
   return (
     <Container
       maxW='container.md'
@@ -85,6 +202,11 @@ const EditProperty = () => {
         <Spinner size='xl' />
       ) : property ? (
         <Box as='form' p={5} borderRadius='md' bg='white' boxShadow='md'>
+          <Flex alignItems='center' gap='6px'>
+            <Link href='/admin'>
+              <FaArrowLeft />
+            </Link>
+          </Flex>
           <VStack spacing={4} align='stretch'>
             <Heading size='lg' textAlign='center'>
               Editar Propiedad
@@ -387,7 +509,26 @@ const EditProperty = () => {
                 }
               />
             </FormControl>
-
+            <FormControl my={12} id='images' gridColumn='span 2'>
+              <FormLabel>Imágenes</FormLabel>
+              <Box
+                cursor='pointer'
+                borderRadius='6px'
+                display='flex'
+                alignItems='center'
+                gap='16px'
+                padding='8px'
+                border='solid 3px gray'
+                {...getRootProps()}
+              >
+                <input {...getInputProps()} />
+                <FaImage size={42} />
+                <p>Arrastra imágenes o haz click para adjuntarlas</p>
+              </Box>
+              <Flex wrap='wrap' mt={4}>
+                {filesPreview}
+              </Flex>
+            </FormControl>
             <Button
               onClick={openConfirmationPopUp}
               colorScheme='teal'

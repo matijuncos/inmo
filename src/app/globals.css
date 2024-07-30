@@ -1,3 +1,18 @@
+:root {
+  --body-bg: #1C1E24;
+  --color-black: #000;
+  --color-white: #fff;
+  --color-light-gray: rgba(128, 128, 128, 0.274);
+  --color-dark-gray: rgba(0, 0, 0, 0.554);
+  --color-background: rgba(231, 216, 215, 0.78);
+  --color-border: rgba(38, 1, 31, 0.516);
+  --color-info: #223150;
+  --color-pink: pink;
+  --color-button-bg: #9198e5;
+  --color-button-shadow: rgba(0,0,0,0.10);
+  --color-image-border: #ddd;
+  --color-image-shadow: rgba(0,0,0,0.1);
+}
 
 * {
   user-select: none;
@@ -8,7 +23,8 @@ body {
   min-height: calc(100vh - 58px);
   height: fit-content;
   overflow-x: hidden;
-  color: black;
+  color: var(--color-white);
+  background-color: var(--body-bg) !important;
   position: relative;
 }
 
@@ -17,10 +33,6 @@ body {
   overflow: hidden;
 }
 
-main {
-  padding: 2rem;
-
-}
 .flex {
   display: flex;
   flex-direction: column;
@@ -45,8 +57,8 @@ main {
 
 .card {
   position: relative;
-  background-color: white;
-  width: 80vw;
+  background-color: var(--color-white);
+  width: 85vw;
   max-width: 660px;
   height: 450px;
   box-shadow: 0px 0px  0px rgba(0, 0, 0, 0.094);
@@ -71,15 +83,15 @@ main {
   left: 0;
   align-items: center;
   justify-content: space-between;
-  background-color: rgba(231, 216, 215, 0.78);
+  background-color: var(--color-background);
   margin: 12px;
-  border: solid 2px rgba(38, 1, 31, 0.516);
+  border: solid 2px var(--color-border);
 }
 
 .card h3 {
   bottom: 0;
   margin: 10px;
-  color: black
+  color: var(--color-white)
 }
 
 .card .card-more-info {
@@ -88,7 +100,7 @@ main {
   cursor: pointer;  
   font-size: 16px;
   font-weight: bold;
-  color: #223150;
+  color: var(--color-info);
   margin: 10px;
   gap: 4px;
   display: flex;
@@ -101,7 +113,7 @@ main {
   width: 100%;
   justify-content: center;
   display: flex;
-  color: pink;
+  color: var(--color-pink);
   animation-name: popup;
   animation-duration: 800ms;
 }
@@ -117,13 +129,13 @@ main {
   border-radius: 100%;
   padding: 14px;
   aspect-ratio: 1/1;
-  background-color: rgba(128, 128, 128, 0.274);
+  background-color: var(--color-light-gray);
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 72px;
-  box-shadow: 4px 4px 10px  rgba(0, 0, 0, 0.554);
+  box-shadow: 4px 4px 10px var(--color-dark-gray);
 }
 
 
@@ -184,12 +196,12 @@ main {
   border: none;
   color: #fff;
   font-size: 18px;
-  background-color: #9198e5;
+  background-color: var(--color-button-bg);
   transition: 200ms;
   margin: 10px;
   font-weight: bolder;
   width: 160px;
-  box-shadow: 0px 0px 30px 0px rgba(0,0,0,0.10);
+  box-shadow: 0px 0px 30px 0px var(--color-button-shadow);
 }
 
 .buttons button:hover {
@@ -231,7 +243,7 @@ main {
   margin: 0; /* Removed margin to control the spacing via Flex's gap */
   max-width: 150px;
   aspect-ratio: 1/1;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-image-border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -249,7 +261,7 @@ main {
 
 .image-container:hover {
   transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px var(--color-image-shadow);
 }
 
 .image-container:hover .property-image {

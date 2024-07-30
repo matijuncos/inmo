@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    experimental: {
+
+        esmExternals: "loose", // <-- add this
+        serverComponentsExternalPackages: ["mongoose"] // <-- and this
+      },
     images: {
         remotePatterns : [
         {
@@ -8,7 +13,14 @@ const nextConfig = {
             port: '',
             pathname: '/fotos-premium/**'
         }
-    ]}
+    ]},
+    webpack: (config) => {
+        config.experiments = {
+            layers: true,
+          topLevelAwait: true
+        };
+        return config;
+      },
 };
 
 export default nextConfig;

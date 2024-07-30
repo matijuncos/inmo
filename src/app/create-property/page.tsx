@@ -104,7 +104,7 @@ const PropertyForm = () => {
       reader.readAsDataURL(file);
       reader.onload = () => {
         const result = reader.result as string;
-        const base64Data = result.split(',')[1]; // Split the result and get the actual base64 data part
+        const base64Data = result.split(',')[1];
         resolve(base64Data);
       };
       reader.onerror = (error) => reject(error);
@@ -130,13 +130,22 @@ const PropertyForm = () => {
 
   const handleSubmit = async (e: React.FormEvent<any>) => {
     e.preventDefault();
+    const token = localStorage.getItem('token');
     // TODO: Validate required features
     try {
       const base64Images = await Promise.all(allFiles.map(toBase64));
-      const { data } = await axios.post('/api/createProperty', {
-        ...formValues,
-        images: base64Images
-      });
+      const { data } = await axios.post(
+        '/api/createProperty',
+        {
+          ...formValues,
+          images: base64Images
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
       setFormValues(initialState);
       setFiles([]);
       if (data.success) {
@@ -158,7 +167,7 @@ const PropertyForm = () => {
       borderRadius='lg'
       boxShadow='lg'
     >
-      <Heading as='h1' size='xl' textAlign='center' mb={6}>
+      <Heading as='h2' color='whitesmoke' size='xl' textAlign='center' mb={6}>
         Agregar propiedad
       </Heading>
       <form
@@ -166,7 +175,9 @@ const PropertyForm = () => {
         style={{ gap: '24px', display: 'flex', flexDirection: 'column' }}
       >
         <FormControl id='title'>
-          <FormLabel fontWeight={700}>Nombre</FormLabel>
+          <FormLabel color='whitesmoke' fontWeight={700}>
+            Nombre
+          </FormLabel>
           <Input
             backgroundColor='white'
             p='24px'
@@ -178,7 +189,9 @@ const PropertyForm = () => {
           />
         </FormControl>
         <FormControl id='location'>
-          <FormLabel fontWeight={700}>Ubicaciòn</FormLabel>
+          <FormLabel color='whitesmoke' fontWeight={700}>
+            Ubicaciòn
+          </FormLabel>
           <Input
             p='24px'
             backgroundColor='white'
@@ -190,7 +203,9 @@ const PropertyForm = () => {
           />
         </FormControl>
         <FormControl id='stories'>
-          <FormLabel fontWeight={700}>Plantas</FormLabel>
+          <FormLabel color='whitesmoke' fontWeight={700}>
+            Plantas
+          </FormLabel>
           <Input
             backgroundColor='white'
             p='24px'
@@ -201,7 +216,9 @@ const PropertyForm = () => {
           />
         </FormControl>
         <FormControl id='garage'>
-          <FormLabel fontWeight={700}>Cochera</FormLabel>
+          <FormLabel color='whitesmoke' fontWeight={700}>
+            Cochera
+          </FormLabel>
           <Input
             p='24px'
             backgroundColor='white'
@@ -212,7 +229,9 @@ const PropertyForm = () => {
           />
         </FormControl>
         <FormControl id='antiquity'>
-          <FormLabel fontWeight={700}>Antigüedad</FormLabel>
+          <FormLabel color='whitesmoke' fontWeight={700}>
+            Antigüedad
+          </FormLabel>
           <Input
             p='24px'
             backgroundColor='white'
@@ -223,7 +242,9 @@ const PropertyForm = () => {
           />
         </FormControl>
         <FormControl id='price'>
-          <FormLabel fontWeight={700}>Precio (U$D)</FormLabel>
+          <FormLabel color='whitesmoke' fontWeight={700}>
+            Precio (U$D)
+          </FormLabel>
           <Input
             type='number'
             name='price'
@@ -234,7 +255,9 @@ const PropertyForm = () => {
           />
         </FormControl>
         <FormControl id='coveredMeters'>
-          <FormLabel fontWeight={700}>Metros cubiertos</FormLabel>
+          <FormLabel color='whitesmoke' fontWeight={700}>
+            Metros cubiertos
+          </FormLabel>
           <Input
             type='number'
             name='coveredMeters'
@@ -245,7 +268,9 @@ const PropertyForm = () => {
           />
         </FormControl>
         <FormControl id='totalMeters'>
-          <FormLabel fontWeight={700}>Metros totales</FormLabel>
+          <FormLabel color='whitesmoke' fontWeight={700}>
+            Metros totales
+          </FormLabel>
           <Input
             type='number'
             name='totalMeters'
@@ -256,7 +281,9 @@ const PropertyForm = () => {
           />
         </FormControl>
         <FormControl id='bedrooms'>
-          <FormLabel fontWeight={700}>Habitaciones</FormLabel>
+          <FormLabel color='whitesmoke' fontWeight={700}>
+            Habitaciones
+          </FormLabel>
           <Input
             type='number'
             name='bedrooms'
@@ -267,7 +294,9 @@ const PropertyForm = () => {
           />
         </FormControl>
         <FormControl id='bathrooms'>
-          <FormLabel fontWeight={700}>Baños</FormLabel>
+          <FormLabel color='whitesmoke' fontWeight={700}>
+            Baños
+          </FormLabel>
           <Input
             type='number'
             name='bathrooms'
@@ -279,7 +308,9 @@ const PropertyForm = () => {
         </FormControl>
         <Flex gap='32px'>
           <FormControl id='category'>
-            <FormLabel fontWeight={700}>Tipo de vivienda</FormLabel>
+            <FormLabel color='whitesmoke' fontWeight={700}>
+              Tipo de vivienda
+            </FormLabel>
             <Select
               name='category'
               backgroundColor='white'
@@ -293,7 +324,9 @@ const PropertyForm = () => {
             </Select>
           </FormControl>
           <FormControl id='operationType'>
-            <FormLabel fontWeight={700}>Tipo de operación</FormLabel>
+            <FormLabel color='whitesmoke' fontWeight={700}>
+              Tipo de operación
+            </FormLabel>
             <Select
               backgroundColor='white'
               name='operationType'
@@ -306,7 +339,9 @@ const PropertyForm = () => {
           </FormControl>
         </Flex>
         <FormControl fontWeight={700} id='rooms'>
-          <FormLabel fontWeight={700}>Ambientes</FormLabel>
+          <FormLabel color='whitesmoke' fontWeight={700}>
+            Ambientes
+          </FormLabel>
           <Input
             p='24px'
             type='text'
@@ -317,7 +352,9 @@ const PropertyForm = () => {
           />
         </FormControl>
         <FormControl id='more'>
-          <FormLabel fontWeight={700}>Más Características</FormLabel>
+          <FormLabel color='whitesmoke' fontWeight={700}>
+            Más Características
+          </FormLabel>
           <Textarea
             name='more'
             value={formValues.more}
@@ -328,7 +365,7 @@ const PropertyForm = () => {
         </FormControl>
         <Flex
           borderRadius='6px'
-          mt={12}
+          mt={0}
           align='start'
           backgroundColor='white'
           padding='16px'
@@ -424,10 +461,11 @@ const PropertyForm = () => {
             </FormControl>
           </Flex>
         </Flex>
-        <FormControl my={12} id='images' gridColumn='span 2'>
-          <FormLabel>Imágenes</FormLabel>
+        <FormControl mb={12} id='images' gridColumn='span 2'>
+          <FormLabel color='whitesmoke'>Imágenes</FormLabel>
           <Box
             cursor='pointer'
+            color='whitesmoke'
             borderRadius='6px'
             display='flex'
             alignItems='center'

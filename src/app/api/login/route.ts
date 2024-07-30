@@ -11,14 +11,26 @@ export async function POST(request: Request) {
   const user = await User.findOne({ email });
 
   if (!user) {
-    return Response.json({ message: 'User not found' }, { status: 400 });
+    return Response.json(
+      { message: 'Usuario o contraseña incorrecta' },
+      { status: 400 }
+    );
   }
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
-    return Response.json({ message: 'Invalid password' }, { status: 400 });
+    return Response.json(
+      { message: 'Usuario o contraseña incorrecta' },
+      { status: 400 }
+    );
   }
   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || '', {
     expiresIn: '1h'
+  });
+
+  const headers = new Headers({
+    'Set-Cookie': `token=${token}; HttpOnly; Path=/; Max-Age=${
+      60 * 60
+    }; SameSite=Strict`
   });
 
   return Response.json(
@@ -27,8 +39,9 @@ export async function POST(request: Request) {
       token,
       userId: user._id,
       name: user.fullName,
-      email: user.email
+      email: user.email,
+      ...(user.admin && { admin: user.admin })
     },
-    { status: 200 }
+    { status: 200, headers }
   );
 }

@@ -7,6 +7,7 @@ const inter = Inter({ subsets: ['latin'] });
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import Footer from './components/Footer';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -23,8 +24,20 @@ export default function RootLayout({
       <body className={inter.className}>
         <ChakraProvider>
           <ToastContainer />
-          <Header />
-          {children}
+          <div
+            style={{
+              minHeight: '100vh',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between'
+            }}
+          >
+            <div>
+              <Header />
+              {children}
+            </div>
+            <Footer />
+          </div>
         </ChakraProvider>
       </body>
     </html>

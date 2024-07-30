@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     } else {
       return Response.json(
         { message: 'User already in interested list' },
-        { status: 409 } // 409 Conflict is often used in cases of duplicate entries
+        { status: 409 }
       );
     }
   } catch (error) {

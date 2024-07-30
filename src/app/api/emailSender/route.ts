@@ -29,7 +29,6 @@ export async function POST(request: Request) {
     console.log('Message sent: %s', mail.messageId);
 
     return Response.json({
-      error: null,
       success: true
     });
   } catch (error) {

@@ -36,8 +36,12 @@ const Admin = () => {
   const notify = (string: string) =>
     toast(string, { theme: 'dark', hideProgressBar: true });
   const router = useRouter();
+
   useEffect(() => {
+    console.log('Component mounted or updated');
+
     (async () => {
+      console.log('Fetching properties');
       setIsloading(true);
       try {
         const { data } = await axios.get('/api/listProperties');
@@ -48,6 +52,10 @@ const Admin = () => {
         setIsloading(false);
       }
     })();
+
+    return () => {
+      console.log('Component unmounting');
+    };
   }, []);
 
   const CustomCell = ({ interestedPeople }: { interestedPeople: any }) => {
@@ -98,9 +106,14 @@ const Admin = () => {
   };
 
   const removeProperty = async (id: string) => {
+    const token = localStorage.getItem('token');
     try {
       setIsloading(true);
-      await axios.delete(`/api/deleteProperty/${id}`);
+      await axios.delete(`/api/deleteProperty/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       const { data } = await axios.get('/api/listProperties');
       notify('Propiedad eliminada');
       setProperties(data.properties);
@@ -136,21 +149,21 @@ const Admin = () => {
       ) : (
         <Box>
           <Box overflowX='auto'>
-            <Table whiteSpace='nowrap' layout='auto'>
+            <Table p={5} whiteSpace='nowrap' layout='auto' color='white'>
               <Thead>
                 <Tr>
-                  <Th>Propiedad</Th>
-                  <Th>Metros Totales</Th>
-                  <Th>Metros Cubiertos</Th>
-                  <Th>Interesados</Th>
-                  <Th>Precio (U$D)</Th>
-                  <Th>Tipo de vivienda</Th>
-                  <Th>Tipo de Operación</Th>
-                  <Th>Habitaciones</Th>
-                  <Th>Dormitorios</Th>
-                  <Th>Baños</Th>
-                  <Th>Disponible</Th>
-                  <Th textAlign='center'>
+                  <Th color='white'>Propiedad</Th>
+                  <Th color='white'>Metros Totales</Th>
+                  <Th color='white'>Metros Cubiertos</Th>
+                  <Th color='white'>Interesados</Th>
+                  <Th color='white'>Precio (U$D)</Th>
+                  <Th color='white'>Tipo de vivienda</Th>
+                  <Th color='white'>Tipo de Operación</Th>
+                  <Th color='white'>Habitaciones</Th>
+                  <Th color='white'>Dormitorios</Th>
+                  <Th color='white'>Baños</Th>
+                  <Th color='white'>Disponible</Th>
+                  <Th color='white' textAlign='center'>
                     <Button
                       colorScheme='blue'
                       onClick={() => navigate('/create-property')}
