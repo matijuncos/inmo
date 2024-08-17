@@ -1,3 +1,4 @@
+'use client';
 import { Property } from '@/lib/types/types';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import React from 'react';

@@ -1,3 +1,4 @@
+'use client';
 import {
   Box,
   Button,
@@ -15,7 +16,7 @@ import {
   RadioGroup,
   Stack
 } from '@chakra-ui/react';
-import React, { useRef } from 'react';
+import React from 'react';
 
 const FiltersDrawer = ({
   isOpen,
@@ -47,8 +48,6 @@ const FiltersDrawer = ({
     bedrooms: any[];
   };
 }) => {
-  const btnRef = useRef();
-
   const handleCheckboxChange = (e: any) => {
     const { name, value, checked } = e.target;
 

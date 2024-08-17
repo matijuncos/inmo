@@ -1,6 +1,7 @@
+'use client';
+import dynamic from 'next/dynamic';
+
 import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import {
   Box,
   CloseButton,
@@ -30,6 +31,7 @@ import {
   FaCheckCircle
 } from 'react-icons/fa';
 import { Property } from '@/lib/types/types';
+const HouseMap = dynamic(() => import('./HouseMap'), { ssr: false });
 
 const InfoModal = ({
   isOpen,
@@ -57,20 +59,7 @@ const InfoModal = ({
             </Flex>
           </ModalHeader>
           {information?.coords?.lat && information?.coords?.lon && (
-            <MapContainer
-              center={[-31.3192715, -64.2830725]}
-              zoom={13}
-              scrollWheelZoom={false}
-              style={{ height: '300px', width: '100%' }}
-            >
-              <TileLayer
-                url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              />
-              <Marker position={[-31.3192715, -64.2830725]}>
-                <Popup>Estas aca</Popup>
-              </Marker>
-            </MapContainer>
+            <HouseMap information={information} />
           )}
           <div
             style={{

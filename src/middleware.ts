@@ -2,6 +2,17 @@
 import * as jose from 'jose';
 import { NextRequest, NextResponse } from 'next/server';
 
+function addCacheHeaders(response: NextResponse) {
+  response.headers.set(
+    'Cache-Control',
+    'no-store, no-cache, must-revalidate, proxy-revalidate'
+  );
+  response.headers.set('Pragma', 'no-cache');
+  response.headers.set('Expires', '0');
+  response.headers.set('Surrogate-Control', 'no-store');
+  return response;
+}
+
 export async function middleware(req: NextRequest) {
   console.log('middleware!');
   console.log('Cookies:', req.cookies); // Log all cookies to see what's being sent
@@ -10,7 +21,11 @@ export async function middleware(req: NextRequest) {
 
   const protectedPaths = ['/admin', '/match'];
   const { pathname } = req.nextUrl;
-
+  if (pathname.startsWith('/api')) {
+    const response = NextResponse.next();
+    addCacheHeaders(response);
+    return response;
+  }
   if (!token && protectedPaths.some((path) => pathname.startsWith(path))) {
     console.log('Redirecting to login, token missing');
     return NextResponse.redirect(new URL('/login', req.url));

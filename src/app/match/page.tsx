@@ -16,16 +16,13 @@ import {
 import ImageModal from '../components/ImageModal';
 import Carousel from '../components/Carousel';
 import { Box, Flex, IconButton, Text, useDisclosure } from '@chakra-ui/react';
-import { BiInfoCircle } from 'react-icons/bi';
 import InfoModal from '../components/InfoModal';
-import { jwtDecode } from 'jwt-decode';
-import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Loader from '../components/Loader';
 import { mailTemplate, mailTemplateTwo } from './utils';
-import { Customer, Property, directions } from '@/lib/types/types';
+import { Property, directions } from '@/lib/types/types';
 import { defaultProperty } from './config';
-import { FaBath, FaBed, FaFilter, FaHeart, FaInfo } from 'react-icons/fa';
+import { FaBath, FaBed, FaHeart, FaInfo } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import FiltersDrawer from '../components/FiltersDrawer';
 import LikedPropertiesDrawer from '../components/LikedProperties';
@@ -51,7 +48,6 @@ export default function Home() {
     priceMax: ''
   });
   const currentIndexRef = useRef(currentIndex);
-  const router = useRouter();
   const { user } = useInmoCtx();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -108,7 +104,7 @@ export default function Home() {
   useEffect(() => {
     getAllProperties({});
   }, []);
-  console.log(user);
+
   useEffect(() => {
     if (user?.userId) {
       getUserPreferedProperties();
