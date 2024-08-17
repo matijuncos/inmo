@@ -96,7 +96,7 @@ const ContactForm = () => {
           </Text>
         </Box>
       </Box>
-      <Box flex='2' p={5} bg='gray.100'>
+      <Box flex='2' p={5} pb={0}>
         <Text fontSize='2xl' fontWeight='bold'>
           ¿NECESITA ASESORAMIENTO?
         </Text>
@@ -163,11 +163,17 @@ const ContactForm = () => {
           >
             <Stack spacing={5} direction='row'>
               <Radio value='Quiero Alquilar'>Quiero Alquilar</Radio>
-              <Radio value='Quiero Comprar'>Quiero Alquilar</Radio>
+              <Radio value='Quiero Comprar'>Quiero Comprar</Radio>
               <Radio value='Quiero Vender'>Quiero Vender</Radio>
+              <Radio value='Permuta'>Quiero Permutar</Radio>
             </Stack>
           </RadioGroup>
-          <Button onClick={submitForm} size='lg'>
+          <Button
+            bg='rgb(189, 2, 20)'
+            color='white'
+            onClick={submitForm}
+            size='lg'
+          >
             ENVIAR CONSULTA
           </Button>
         </Stack>

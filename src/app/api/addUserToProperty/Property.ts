@@ -24,6 +24,10 @@ const propertySchema = new mongoose.Schema({
   bedrooms: Number,
   bathrooms: Number,
   available: Boolean,
+  coords: {
+    lat: Number,
+    lon: Number
+  },
   interestedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 });
 

@@ -40,6 +40,9 @@ export async function POST(request: Request) {
       userId: user._id,
       name: user.fullName,
       email: user.email,
+      ...(user.propertiesOfInterest && {
+        propertiesOfInterest: user.propertiesOfInterest
+      }),
       ...(user.admin && { admin: user.admin })
     },
     { status: 200, headers }

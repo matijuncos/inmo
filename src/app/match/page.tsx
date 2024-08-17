@@ -25,9 +25,12 @@ import Loader from '../components/Loader';
 import { mailTemplate, mailTemplateTwo } from './utils';
 import { Customer, Property, directions } from '@/lib/types/types';
 import { defaultProperty } from './config';
-import { FaBath, FaBed, FaFilter } from 'react-icons/fa';
+import { FaBath, FaBed, FaFilter, FaHeart, FaInfo } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import FiltersDrawer from '../components/FiltersDrawer';
+import LikedPropertiesDrawer from '../components/LikedProperties';
+import { useInmoCtx } from '../context/InmoContext';
+import CardContent from '../components/CardContent';
 
 export default function Home() {
   const [db, setDb] = useState<Property[] | null>(null);
@@ -38,8 +41,7 @@ export default function Home() {
   const [selectedImage, setSelectedImage] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
-  const [customer, setCustomer] = useState<Customer | null>(null);
-  const [userId, setUserId] = useState('');
+  const [listOfLikedProperties, setListOfLikedProperties] = useState([]);
   const [aggFilters, setAggFilters] = useState();
   const [filters, setFilters] = useState({
     category: '',
@@ -50,7 +52,13 @@ export default function Home() {
   });
   const currentIndexRef = useRef(currentIndex);
   const router = useRouter();
+  const { user } = useInmoCtx();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isLikedDrawerOpen,
+    onOpen: onLikedDrawerOpen,
+    onClose: onLikedDraweClose
+  } = useDisclosure();
   const childRefs = useMemo(
     () =>
       Array(db?.length)
@@ -86,33 +94,26 @@ export default function Home() {
     }
   };
 
+  const getUserPreferedProperties = async () => {
+    try {
+      const { data } = await axios.post('/api/getUserLikedProperties', {
+        id: user?.userId
+      });
+      setListOfLikedProperties(data.likedProperties);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getAllProperties({});
   }, []);
-
+  console.log(user);
   useEffect(() => {
-    const customer = localStorage.getItem('user');
-    const userId = localStorage.getItem('userId');
-    setUserId(userId || '');
-
-    if (customer) setCustomer(JSON.parse(customer));
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-      return;
+    if (user?.userId) {
+      getUserPreferedProperties();
     }
-
-    const decodedToken = jwtDecode(token);
-    if (decodedToken && 'exp' in decodedToken && decodedToken.exp) {
-      const isExpired = decodedToken.exp * 1000 < Date.now();
-      if (isExpired) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('userId');
-        localStorage.removeItem('user');
-        router.push('/login');
-      }
-    }
-  }, [router]);
+  }, [user?.userId]);
 
   const updateCurrentIndex = (val: number) => {
     setCurrentIndex(val);
@@ -131,10 +132,13 @@ export default function Home() {
     property: Property
   ) => {
     updateCurrentIndex(index - 1);
-    const userId = localStorage.getItem('userId');
+
+    const userId = user?.userId;
     const alreadyLiked = property.interestedUsers.some(
-      (user) => user._id === userId
+      (user) => user?._id === userId
     );
+
+    console.log(property.interestedUsers, userId);
     if (direction === directions.right && userId && !alreadyLiked) {
       try {
         await Promise.all([
@@ -143,10 +147,10 @@ export default function Home() {
             id: property._id
           }),
           axios.post('/api/emailSender', {
-            name: customer?.fullName,
-            email: customer?.email,
-            message: mailTemplate(property.title, customer?.fullName || ''),
-            message2: mailTemplateTwo(property.title, customer?.fullName || '')
+            name: user?.fullName,
+            email: user?.email,
+            message: mailTemplate(property.title, user?.fullName || ''),
+            message2: mailTemplateTwo(property.title, user?.fullName || '')
           })
         ]);
         notify('Matcheaste con una propiedad! ♥️');
@@ -208,8 +212,8 @@ export default function Home() {
   }) => {
     return (
       <div className='icon-data'>
-        <Icon color='white' />
-        <Text as='span' color='white'>
+        <Icon color='black' />
+        <Text as='span' color='black'>
           {textValue}
         </Text>
       </div>
@@ -267,13 +271,30 @@ export default function Home() {
           <Loader />
         </Flex>
       ) : (
-        <div className='app-container'>
-          <IconButton
-            aria-label='filters'
-            ml='36px'
-            my='18px'
-            icon={<FaFilter />}
-            onClick={() => onOpen()}
+        <Box className='app-container'>
+          {/*  <Box position='absolute'>
+            <IconButton
+              aria-label='filters'
+              ml='36px'
+              my='18px'
+              icon={<FaFilter />}
+              onClick={() => onOpen()}
+            />
+          </Box> */}
+          {!!listOfLikedProperties.length && (
+            <Box position='absolute' top='20px'>
+              <IconButton
+                aria-label='filters'
+                ml='36px'
+                icon={<FaHeart color='' />}
+                onClick={() => onLikedDrawerOpen()}
+              />
+            </Box>
+          )}
+          <LikedPropertiesDrawer
+            properties={listOfLikedProperties}
+            isOpen={isLikedDrawerOpen}
+            onClose={onLikedDraweClose}
           />
           <FiltersDrawer
             isOpen={isOpen}
@@ -296,7 +317,7 @@ export default function Home() {
             onClose={() => setIsInfoModalOpen(false)}
             isOpen={isInfoModalOpen}
           />
-          {localStorage.getItem('token') && (
+          {user && (
             <div className='flex'>
               <div className='cardContainer'>
                 {db?.map((character, index) => (
@@ -320,53 +341,11 @@ export default function Home() {
                     }
                     onCardLeftScreen={() => outOfFrame(character.title, index)}
                   >
-                    <Box
-                      boxShadow='xl'
-                      style={{
-                        backgroundImage: 'url(' + character.images[0] + ')'
-                      }}
-                      className='card'
-                    >
-                      {character.interestedUsers.some(
-                        (user) => user._id === userId
-                      ) && (
-                        <Box
-                          border='solid 6px green'
-                          borderRadius='16px'
-                          backgroundColor='white'
-                          p='14px'
-                          position='absolute'
-                          top={'62px'}
-                          right={'14px'}
-                          transform='rotate(30deg)'
-                          boxShadow='4px 4px 4px rgba(0, 0, 0, 0.3)'
-                          color='green'
-                          fontWeight={700}
-                          fontSize='24px'
-                        >
-                          <Text>Ya hiciste Match!</Text>
-                        </Box>
-                      )}
-                      {hasMainFeatures && (
-                        <Flex className='flex-in-card' boxShadow='xl'>
-                          <Text
-                            color='black'
-                            pl='8px'
-                            fontSize='20px'
-                            fontWeight={600}
-                          >
-                            {character.title}
-                          </Text>
-                          <div
-                            className='card-more-info'
-                            onClick={() => setIsInfoModalOpen(true)}
-                          >
-                            <BiInfoCircle size={20} color='#223150' />
-                            <Text>Ver información</Text>
-                          </div>
-                        </Flex>
-                      )}
-                    </Box>
+                    <CardContent
+                      hasMainFeatures={Boolean(hasMainFeatures)}
+                      setIsInfoModalOpen={setIsInfoModalOpen}
+                      property={character}
+                    />
                   </TinderCard>
                 ))}
               </div>
@@ -417,27 +396,41 @@ export default function Home() {
               </div>
               <div className='info-container'>
                 {hasMainFeatures && (
-                  <div className='description'>
-                    <IconAndData
-                      Icon={FaBath}
-                      textValue={
-                        'Baños: ' + db?.[currentIndex]?.bathrooms?.toString()
-                      }
-                    />
-                    <IconAndData
-                      Icon={FaHouse}
-                      textValue={
-                        'Ambientes: ' + db?.[currentIndex]?.rooms?.toString()
-                      }
-                    />
-                    <IconAndData
-                      Icon={FaBed}
-                      textValue={
-                        'Dormitorios: ' +
-                        db?.[currentIndex]?.bedrooms?.toString()
-                      }
-                    />
-                  </div>
+                  <>
+                    <div className='description'>
+                      <IconAndData
+                        Icon={FaBath}
+                        textValue={
+                          'Baños: ' + db?.[currentIndex]?.bathrooms?.toString()
+                        }
+                      />
+                      <IconAndData
+                        Icon={FaHouse}
+                        textValue={
+                          'Ambientes: ' + db?.[currentIndex]?.rooms?.toString()
+                        }
+                      />
+                      <IconAndData
+                        Icon={FaBed}
+                        textValue={
+                          'Dormitorios: ' +
+                          db?.[currentIndex]?.bedrooms?.toString()
+                        }
+                      />
+                      <div
+                        className='card-more-info'
+                        onClick={() => setIsInfoModalOpen(true)}
+                      >
+                        <FaInfo /> Más info
+                      </div>
+                    </div>
+                    <Box
+                      maxW='660px'
+                      m='auto'
+                      className='flex-in-card'
+                      boxShadow='xl'
+                    ></Box>
+                  </>
                 )}
               </div>
               {!!db?.[currentIndex]?.images?.length && hasMainFeatures && (
@@ -451,7 +444,7 @@ export default function Home() {
               )}
             </div>
           )}
-        </div>
+        </Box>
       )}
     </main>
   );

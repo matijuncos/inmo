@@ -5,10 +5,12 @@ import { FaHeart, FaMailBulk } from 'react-icons/fa';
 import { FaHouse } from 'react-icons/fa6';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { useInmoCtx } from '../context/InmoContext';
 
 const size = 48;
 const Hero = () => {
   const router = useRouter();
+  const { user } = useInmoCtx();
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -39,11 +41,11 @@ const Hero = () => {
   };
 
   const goSwipe = () => {
-    router.push('/match');
+    router.push(user ? '/match' : '/login');
   };
 
   return (
-    <Box position='relative' minHeight='calc(100vh - 80px)'>
+    <Box position='relative' minHeight='calc(100vh - 80px)' display='flex'>
       <motion.div
         variants={containerVariants}
         initial='hidden'
@@ -94,32 +96,25 @@ const Hero = () => {
             <Text
               fontSize={['28px', '42px']}
               fontWeight='bold'
-              color='whitesmoke'
+              color='white'
               as='h1'
+              mt='2rem'
             >
-              Lorem Ipsum.
+              Encontremos la casa de tus sueños
             </Text>
+
             <motion.div variants={itemVariants}>
-              <Text fontWeight='semibold' color='whitesmoke'>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Modi
-                perspiciatis magni, id, vero sed aliquid explicabo totam fugiat
-                doloribus ullam rerum. Dignissimos aliquam reiciendis
-                accusantium odio laboriosam suscipit quae? Ipsa! Ullam iure
-                explicabo fugit,
+              <Text fontWeight='bold' color='white'>
+                La creatividad hoy no está entre nosotros así que no se que
+                escribir acà
               </Text>
             </motion.div>
             <motion.div variants={itemVariants}>
-              <Text fontWeight='semibold' color='whitesmoke'>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Modi
-                odio laboriosam suscipit quae? Ipsa! Ullam iure explicabo fugit,
-              </Text>
-            </motion.div>
-            <motion.div variants={itemVariants}>
-              <Text fontWeight='semibold' color='whitesmoke'>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Modi
-                odio laboriosam suscipit quae? Ipsa! Ullam iure explicabo fugit,
-                doloribus ullam rerum. Dignissimos aliquam reiciendis
-                accusantium
+              <Text fontWeight='semibold' color='white'>
+                Descubre un nuevo estándar en servicios inmobiliarios. En
+                Santamarina & Asociados, conectamos personas con sus hogares y
+                oportunidades de inversión soñadas, brindando asesoramiento
+                profesional y un enfoque personalizado.
               </Text>
             </motion.div>
             <Flex
@@ -135,19 +130,19 @@ const Hero = () => {
                   alignItems='center'
                   justifyContent='center'
                   aspectRatio='1'
-                  border='solid 2px whitesmoke'
+                  border='solid 2px white'
                   borderRadius='4px'
                   transition='all ease 0.3s'
                   _hover={{
                     transform: 'scale(1.05)'
                   }}
                 >
-                  <FaHeart size={size} color='whitesmoke' />
+                  <FaHeart size={size} color='white' />
                 </Box>
                 <Text
                   m=' 8px auto auto auto'
                   textAlign='center'
-                  color='whitesmoke'
+                  color='white'
                   fontWeight={600}
                 >
                   Hacé match!
@@ -161,7 +156,7 @@ const Hero = () => {
                   alignItems='center'
                   justifyContent='center'
                   aspectRatio='1'
-                  border='solid 2px whitesmoke'
+                  border='solid 2px white'
                   borderRadius='4px'
                   fontWeight={600}
                   transition='all ease 0.3s'
@@ -169,12 +164,12 @@ const Hero = () => {
                     transform: 'scale(1.05)'
                   }}
                 >
-                  <FaMailBulk size={size} color='whitesmoke' />
+                  <FaMailBulk size={size} color='white' />
                 </Box>
                 <Text
                   m=' 8px auto auto auto'
                   textAlign='center'
-                  color='whitesmoke'
+                  color='white'
                   fontWeight={600}
                 >
                   Comunicate con <br />
@@ -189,20 +184,20 @@ const Hero = () => {
                   alignItems='center'
                   justifyContent='center'
                   aspectRatio='1'
-                  border='solid 2px whitesmoke'
+                  border='solid 2px white'
                   borderRadius='4px'
                   transition='all ease 0.3s'
                   _hover={{
                     transform: 'scale(1.05)'
                   }}
                 >
-                  <FaHouse size={size} color='whitesmoke' />
+                  <FaHouse size={size} color='white' />
                 </Box>
                 <Text
                   fontWeight={600}
                   m=' 8px auto auto auto'
                   textAlign='center'
-                  color='whitesmoke'
+                  color='white'
                 >
                   Conocé tu <br />
                   próximo hogar!
@@ -227,8 +222,9 @@ const Hero = () => {
               onClick={goSwipe}
               style={{
                 padding: '8px',
-                backgroundColor: 'whitesmoke',
+                backgroundColor: '#B50202',
                 borderRadius: '4px',
+                color: 'whitesmoke',
                 fontWeight: '600'
               }}
               variants={itemVariants}
@@ -238,8 +234,9 @@ const Hero = () => {
           </Box>
           <Box
             position='relative'
+            p='2rem'
             display={['none', 'none', 'block']}
-            boxShadow='18px 18px 24px rgba(0,0,0, 0.55)'
+            //   boxShadow='18px 18px 24px rgba(0,0,0, 0.25)'
             width={['100%', '100%', '40%']}
             minHeight={['450px', '450px', '450px']}
             borderRadius='6px'
@@ -258,7 +255,8 @@ const Hero = () => {
                 backgroundRepeat: 'no-repeat',
                 backgroundSize: 'cover',
                 backgroundPosition: '50% 50%',
-                borderRadius: '6px'
+                borderRadius: '3px',
+                boxShadow: '18px 18px 24px rgba(0,0,0, 0.25)'
               }}
             ></motion.div>
           </Box>

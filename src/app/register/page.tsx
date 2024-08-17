@@ -15,6 +15,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Loader from '../components/Loader';
+import { useInmoCtx } from '../context/InmoContext';
 
 export default function Home() {
   const [email, setEmail] = useState('');
@@ -24,6 +25,7 @@ export default function Home() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const { setUser } = useInmoCtx();
   const handleLogin = async () => {
     try {
       setLoading(true);
@@ -34,16 +36,8 @@ export default function Home() {
         phone
       });
       if (res.status === 201) {
+        setUser(res.data);
         router.push('/match');
-        localStorage.setItem('token', res.data.token);
-        localStorage.setItem('userId', res.data.user._id);
-        localStorage.setItem(
-          'user',
-          JSON.stringify({
-            email: res.data.user.email,
-            fullName: res.data.user.fullName
-          })
-        );
       }
     } catch (error: any) {
       setErrorMessage(error.response.data.message);

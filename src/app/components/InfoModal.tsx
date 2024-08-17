@@ -1,4 +1,6 @@
 import React from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 import {
   Box,
   CloseButton,
@@ -54,83 +56,98 @@ const InfoModal = ({
               <CloseButton outline='none' marginLeft='auto' onClick={onClose} />
             </Flex>
           </ModalHeader>
+          {information?.coords?.lat && information?.coords?.lon && (
+            <MapContainer
+              center={[-31.3192715, -64.2830725]}
+              zoom={13}
+              scrollWheelZoom={false}
+              style={{ height: '300px', width: '100%' }}
+            >
+              <TileLayer
+                url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              />
+              <Marker position={[-31.3192715, -64.2830725]}>
+                <Popup>Estas aca</Popup>
+              </Marker>
+            </MapContainer>
+          )}
           <div
             style={{
               padding: '16px',
               display: 'grid',
               width: '100%',
               overflow: 'auto',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', // Creates three columns
-              gap: '20px' // Adds space between the columns
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: '20px'
             }}
           >
             {information?.showPrice && (
               <IconAndData
-                Icon={FaDollarSign} // Icon for price
+                Icon={FaDollarSign}
                 textValue={'Precio: U$D' + information?.price?.toString()}
               />
             )}
             <IconAndData
-              Icon={FaRulerCombined} // Icon for total meters
+              Icon={FaRulerCombined}
               textValue={
                 'Metros totales: ' + information?.totalMeters?.toString()
               }
             />
             <IconAndData
-              Icon={FaBath} // Icon for bathrooms
+              Icon={FaBath}
               textValue={'Baños: ' + information?.bathrooms?.toString()}
             />
             <IconAndData
-              Icon={FaDoorOpen} // Icon for rooms
+              Icon={FaDoorOpen}
               textValue={'Ambientes: ' + information?.rooms?.toString()}
             />
             <IconAndData
-              Icon={FaBed} // Icon for bedrooms
+              Icon={FaBed}
               textValue={'Dormitorios: ' + information?.bedrooms?.toString()}
             />
             <IconAndData
-              Icon={FaBuilding} // Icon for stories
+              Icon={FaBuilding}
               textValue={'Plantas: ' + information?.stories?.toString()}
             />
             <IconAndData
-              Icon={FaCar} // Icon for garage
+              Icon={FaCar}
               textValue={'Garaje: ' + information?.garage?.toString()}
             />
             <IconAndData
-              Icon={FaCalendarAlt} // Icon for antiquity
+              Icon={FaCalendarAlt}
               textValue={
                 'Antigüedad: ' + information?.antiquity?.toString() + ' años'
               }
             />
             <IconAndData
-              Icon={FaWifi} // Icon for internet
+              Icon={FaWifi}
               textValue={'Internet: ' + (information?.internet ? 'Sí' : 'No')}
             />
             <IconAndData
-              Icon={FaSnowflake} // Icon for air conditioning
+              Icon={FaSnowflake}
               textValue={
                 'Aire Acondicionado: ' + (information?.ac ? 'Sí' : 'No')
               }
             />
             <IconAndData
-              Icon={FaFire} // Icon for heating
+              Icon={FaFire}
               textValue={'Calefacción: ' + (information?.heat ? 'Sí' : 'No')}
             />
             <IconAndData
-              Icon={FaBurn} // Icon for gas
+              Icon={FaBurn}
               textValue={'Gas: ' + (information?.gas ? 'Sí' : 'No')}
             />
             <IconAndData
-              Icon={FaTags} // Icon for category
+              Icon={FaTags}
               textValue={'Tipo de vivienda: ' + information?.category}
             />
             <IconAndData
-              Icon={FaHandshake} // Icon for operation type
+              Icon={FaHandshake}
               textValue={'Tipo de Operación: ' + information?.operationType}
             />
-
             <IconAndData
-              Icon={FaCheckCircle} // Icon for availability
+              Icon={FaCheckCircle}
               textValue={
                 'Disponible: ' + (information?.available ? 'Sí' : 'No')
               }

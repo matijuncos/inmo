@@ -16,49 +16,38 @@ import {
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { jwtDecode } from 'jwt-decode';
 import Loader from '../components/Loader';
 import Link from 'next/link';
-import GuestModal from '../components/GuestModal';
+import { useInmoCtx } from '../context/InmoContext';
 
 export default function Home() {
+  const { setUser } = useInmoCtx();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const [show, setShow] = useState(false);
-  const [isGuestModalOpen, setIsGuestModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const handleLogin = async () => {
     try {
       setLoading(true);
       const res = await axios.post('/api/login', { email, password });
-      if (res.status === 200) {
-        const isAdmin = res.data.admin;
-        router.push(isAdmin ? '/admin' : '/match');
-        localStorage.setItem('token', res.data.token);
-        localStorage.setItem('userId', res.data.userId);
-        localStorage.setItem(
-          'user',
-          JSON.stringify({ email: res.data.email, fullName: res.data.name })
-        );
-      }
+      setUser(res.data);
+      setTimeout(() => {
+        router.push('/match');
+      }, 1000);
     } catch (error: any) {
       setErrorMessage(error.response.data.message);
       console.log(error);
-    } finally {
-      setLoading(false);
     }
   };
 
   const isDisabled = password === '' || email === '';
-
+  useEffect(() => {
+    return () => setLoading(false);
+  }, []);
   return (
     <main>
-      <GuestModal
-        isOpen={isGuestModalOpen}
-        onClose={() => setIsGuestModalOpen(false)}
-      />
       <Box
         display='flex'
         height='100%'
@@ -70,7 +59,13 @@ export default function Home() {
           <Loader />
         ) : (
           <Box maxW='md' w='full' bg='white' boxShadow='xl' rounded='lg' p={6}>
-            <Heading as='h2' size='lg' textAlign='center' mb={0}>
+            <Heading
+              as='h2'
+              color='rgb(181, 2, 2)'
+              size='lg'
+              textAlign='center'
+              mb='14px'
+            >
               Inicia sesión
             </Heading>
 
@@ -112,7 +107,7 @@ export default function Home() {
               )}
               <Button
                 onClick={handleLogin}
-                backgroundColor='#1C1E24'
+                backgroundColor='rgb(181, 2, 2)'
                 color='white'
                 isDisabled={isDisabled}
                 size='lg'
@@ -121,7 +116,7 @@ export default function Home() {
                   bg: 'grey'
                 }}
                 _hover={{
-                  bg: '#1C1E24'
+                  bg: 'rgb(189, 2, 20)'
                 }}
                 fontSize='md'
               >

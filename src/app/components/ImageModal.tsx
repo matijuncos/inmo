@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Box,
   CloseButton,
   Modal,
   ModalCloseButton,
@@ -27,25 +28,39 @@ const ImageModal = ({
     >
       <ModalOverlay>
         <ModalContent
-          maxW='1084px'
+          maxW='884px'
+          // height='540px'
           w='884px'
           m='0 auto'
           display='grid'
           placeItems='center'
         >
-          <CloseButton outline='none' marginLeft='auto' onClick={onClose} />
           <div
             style={{
               borderRadius: '6px',
               backgroundImage: 'url(' + imageUrl + ')',
-              backgroundSize: 'contain',
+              backgroundPosition: '0% 0%',
+              backgroundSize: 'cover',
               backgroundRepeat: 'no-repeat',
               margin: 'auto',
               overflow: 'hidden',
-              width: '400px',
-              height: '500px'
+              width: '100%',
+              height: '540px'
             }}
-          />
+          >
+            <Box
+              backgroundColor='white'
+              width='fit-content'
+              ml='auto'
+              borderRadius='0 0 0 50% '
+            >
+              <CloseButton
+                outline='white'
+                marginLeft='auto'
+                onClick={onClose}
+              />
+            </Box>
+          </div>
         </ModalContent>
       </ModalOverlay>
     </Modal>

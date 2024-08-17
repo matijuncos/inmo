@@ -17,7 +17,13 @@ export async function POST(request: Request) {
     );
   }
   const hashedPassword = await bcrypt.hash(password, 10);
-  const user = new User({ email, password: hashedPassword, phone, fullName });
+  const user = new User({
+    email,
+    password: hashedPassword,
+    phone,
+    fullName,
+    propertiesOfInterest: []
+  });
 
   await user.save();
   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || '', {

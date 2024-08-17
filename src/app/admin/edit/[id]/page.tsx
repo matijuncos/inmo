@@ -27,6 +27,7 @@ import { BiTrash } from 'react-icons/bi';
 import { useDropzone } from 'react-dropzone';
 import { FaArrowLeft, FaImage } from 'react-icons/fa';
 import { jwtDecode } from 'jwt-decode';
+import { useInmoCtx } from '@/app/context/InmoContext';
 
 const EditProperty = () => {
   const { id } = useParams();
@@ -36,7 +37,7 @@ const EditProperty = () => {
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [allFiles, setFiles] = useState<File[]>([]);
-
+  const { user, setUser } = useInmoCtx();
   const { getRootProps, getInputProps } = useDropzone({
     accept: { 'image/*': [] },
     onDrop: (acceptedFiles) => {
@@ -52,7 +53,8 @@ const EditProperty = () => {
   });
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    // TODO: This might be better in context
+    const token = user?.token;
     if (!token) {
       router.push('/login');
       return;
@@ -62,9 +64,7 @@ const EditProperty = () => {
     if (decodedToken && 'exp' in decodedToken && decodedToken.exp) {
       const isExpired = decodedToken.exp * 1000 < Date.now();
       if (isExpired) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('userId');
-        localStorage.removeItem('user');
+        setUser(null);
         router.push('/login');
       }
     }
@@ -99,7 +99,7 @@ const EditProperty = () => {
     });
 
   const updateProperty = async () => {
-    const token = localStorage.getItem('token');
+    const token = user?.token;
     setLoading(true);
     const base64Images = await Promise.all(allFiles.map(toBase64));
     try {
@@ -506,6 +506,39 @@ const EditProperty = () => {
                 isChecked={property.available}
                 onChange={(e) =>
                   setProperty({ ...property, available: e.target.checked })
+                }
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Coordenadas</FormLabel>
+              <Input
+                placeholder='Latitud'
+                type='number'
+                step='any'
+                onChange={(e) =>
+                  setProperty({
+                    ...property,
+                    coords: {
+                      ...property.coords,
+                      lon: property.coords?.lon || 0,
+                      lat: Number(e.target.value)
+                    }
+                  })
+                }
+              />
+              <Input
+                placeholder='Longitud'
+                type='number'
+                step='any'
+                onChange={(e) =>
+                  setProperty({
+                    ...property,
+                    coords: {
+                      ...property.coords,
+                      lat: property.coords?.lat || 0,
+                      lon: Number(e.target.value)
+                    }
+                  })
                 }
               />
             </FormControl>

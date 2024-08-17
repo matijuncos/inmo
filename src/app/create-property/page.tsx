@@ -21,6 +21,7 @@ import { toast } from 'react-toastify';
 import { useDropzone } from 'react-dropzone';
 import { BiTrash } from 'react-icons/bi';
 import { FaImage } from 'react-icons/fa';
+import { useInmoCtx } from '../context/InmoContext';
 
 const initialState = {
   title: '',
@@ -45,7 +46,11 @@ const initialState = {
   images: [],
   bedrooms: '',
   bathrooms: '',
-  available: true
+  available: true,
+  coords: {
+    lat: 0,
+    lon: 0
+  }
 };
 
 const PropertyForm = () => {
@@ -53,7 +58,7 @@ const PropertyForm = () => {
     toast(string, { theme: 'dark', hideProgressBar: true });
   const [formValues, setFormValues] = useState(initialState);
   const [allFiles, setFiles] = useState<File[]>([]);
-
+  const { user } = useInmoCtx();
   const { getRootProps, getInputProps } = useDropzone({
     accept: { 'image/*': [] },
     onDrop: (acceptedFiles) => {
@@ -130,7 +135,7 @@ const PropertyForm = () => {
 
   const handleSubmit = async (e: React.FormEvent<any>) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
+    const token = user?.token;
     // TODO: Validate required features
     try {
       const base64Images = await Promise.all(allFiles.map(toBase64));
@@ -279,6 +284,47 @@ const PropertyForm = () => {
             value={formValues.totalMeters}
             onChange={handleChange}
           />
+        </FormControl>
+        <FormControl id='coords'>
+          <FormLabel color='whitesmoke' fontWeight={700}>
+            Coordenadas
+          </FormLabel>
+          <Flex gap='16px'>
+            <Input
+              type='number'
+              name='lat'
+              placeholder='Latitud'
+              backgroundColor='white'
+              p='24px'
+              value={formValues.coords.lat}
+              onChange={(e) =>
+                setFormValues({
+                  ...formValues,
+                  coords: {
+                    ...formValues.coords,
+                    lat: parseFloat(e.target.value)
+                  }
+                })
+              }
+            />
+            <Input
+              type='number'
+              name='lon'
+              placeholder='Longitud'
+              backgroundColor='white'
+              p='24px'
+              value={formValues.coords.lon}
+              onChange={(e) =>
+                setFormValues({
+                  ...formValues,
+                  coords: {
+                    ...formValues.coords,
+                    lon: parseFloat(e.target.value)
+                  }
+                })
+              }
+            />
+          </Flex>
         </FormControl>
         <FormControl id='bedrooms'>
           <FormLabel color='whitesmoke' fontWeight={700}>

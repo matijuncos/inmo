@@ -18,6 +18,10 @@ export async function POST(request: Request) {
     if (!property.interestedUsers.includes(userId)) {
       property.interestedUsers.push(userId);
       await property.save();
+      if (!user.propertiesOfInterest?.includes(id)) {
+        user.propertiesOfInterest.push(id);
+        await user.save();
+      }
       return Response.json(
         { message: 'User added to interested list' },
         { status: 201 }

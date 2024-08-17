@@ -1,65 +1,63 @@
 'use client';
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { FaList, FaSignOutAlt } from 'react-icons/fa';
 import { FaBlog } from 'react-icons/fa6';
 import { FaHome, FaHeart, FaPhone } from 'react-icons/fa';
 import axios from 'axios';
+import { useInmoCtx } from '../context/InmoContext';
 const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const [isLogged, setIsLogged] = useState(false);
-
+  const { user, setUser } = useInmoCtx();
   const signOut = async () => {
     await axios.post('/api/logout');
-    localStorage.removeItem('token');
-    setIsLogged(false);
+    setUser(null);
     router.push('/');
   };
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    setIsLogged(!!token);
-  }, []);
 
-  const pathsToExcludeSignOut = [
-    // '/',
-    // '/home',
-    // '/contact',
-    // '/about',
-    '/login',
-    '/register',
-    '/pass-recover'
-  ];
+  const pathsToExcludeSignOut = ['/login', '/register', '/pass-recover'];
   const admindLinks = ['/admin', '/create-propery', '/admin/edit'];
   const isPathAdminLink = (path: string) =>
-    admindLinks.some((adminPath) => path.startsWith(adminPath));
+    user?.admin && admindLinks.some((adminPath) => path.startsWith(adminPath));
   return (
     <Flex
       as='header'
       width='100%'
-      padding='16px'
+      padding='8px'
+      boxShadow='xl'
       justifyContent='space-between'
     >
       <Flex alignItems='center' justifyContent='space-between' w='100%'>
-        <Flex alignItems='center' gap='18px'>
+        <Flex
+          alignItems='center'
+          gap='18px'
+          overflow='hidden'
+          cursor='pointer'
+          onClick={() => router.push('/')}
+        >
           <Box
-            border='5px solid whitesmoke'
             borderRadius='100%'
-            padding='8px 8px'
             display='grid'
             width='60px'
             height='60px'
             placeItems='center'
           >
-            <FaBlog color='whitesmoke' size='20px' />
+            <Image
+              src='santamarina.jpeg'
+              objectFit='cover'
+              width='100%'
+              alt='logo - santamarina inmuebles'
+              height='100%'
+            />
           </Box>
-          <Text fontSize={24} fontWeight={700} color='whitesmoke'>
-            Real State H
+          <Text fontSize={20} fontWeight={700} color='#B50202'>
+            Inmobiliaria Santamarina & Asoc.
           </Text>
         </Flex>
-        <Flex as='nav' color='whitesmoke' gap='24px' mr='12px'>
+        <Flex as='nav' color='#B50202' gap='24px' mr='12px'>
           <Link
             style={{
               fontWeight: '600',
@@ -120,7 +118,7 @@ const Header = () => {
           )}
         </Flex>
       </Flex>
-      {!pathsToExcludeSignOut.includes(pathname) && isLogged && (
+      {!pathsToExcludeSignOut.includes(pathname) && user && (
         <Flex
           mx='12px'
           cursor='pointer'
@@ -128,7 +126,7 @@ const Header = () => {
           gap='6px'
           onClick={signOut}
           minWidth='fit-content'
-          color='whitesmoke'
+          color='#B50202'
         >
           <FaSignOutAlt />
           <Text fontWeight={600}>Cerrar Sesión</Text>

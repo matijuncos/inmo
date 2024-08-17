@@ -14,9 +14,11 @@ import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram } from 'react-icons/fa';
 const Footer = () => {
   return (
     <Box
-      bg={useColorModeValue('gray.800', 'gray.900')}
-      color={useColorModeValue('gray.200', 'gray.200')}
+      className='footer'
+      bg={useColorModeValue('white', 'white')}
+      color={useColorModeValue('rgb(181, 2, 2)', 'rgb(181, 2, 2)')}
       py={10}
+      boxShadow='xl'
     >
       <Container as={Stack} maxW='calc(100vw - 10rem)' spacing={4}>
         <Stack
@@ -26,7 +28,7 @@ const Footer = () => {
           align={'center'}
         >
           <Text fontSize={'lg'} fontWeight={'bold'}>
-            Real Estate Company
+            Inmobiliaria Santamarina & Asoc.
           </Text>
           <Stack direction={'row'} spacing={6}>
             <Link href={'/'}>Inicio</Link>
@@ -49,36 +51,56 @@ const Footer = () => {
               href={'#'}
               aria-label='Facebook'
               icon={<FaFacebook />}
-              bg={useColorModeValue('gray.700', 'gray.600')}
+              bg={useColorModeValue('rgb(181, 2, 2)', 'rgb(181, 2, 2)')}
               color={'white'}
-              _hover={{ bg: useColorModeValue('gray.600', 'gray.500') }}
+              _hover={{
+                bg: useColorModeValue(
+                  'rgba(181, 2, 2, 0.9)',
+                  'rgba(181, 2, 2, 0.9)'
+                )
+              }}
             />
             <IconButton
               as={Link}
               href={'#'}
               aria-label='Twitter'
               icon={<FaTwitter />}
-              bg={useColorModeValue('gray.700', 'gray.600')}
+              bg={useColorModeValue('rgb(181, 2, 2)', 'rgb(181, 2, 2)')}
               color={'white'}
-              _hover={{ bg: useColorModeValue('gray.600', 'gray.500') }}
+              _hover={{
+                bg: useColorModeValue(
+                  'rgba(181, 2, 2, 0.9)',
+                  'rgba(181, 2, 2, 0.9)'
+                )
+              }}
             />
             <IconButton
               as={Link}
               href={'#'}
               aria-label='LinkedIn'
               icon={<FaLinkedin />}
-              bg={useColorModeValue('gray.700', 'gray.600')}
+              bg={useColorModeValue('rgb(181, 2, 2)', 'rgb(181, 2, 2)')}
               color={'white'}
-              _hover={{ bg: useColorModeValue('gray.600', 'gray.500') }}
+              _hover={{
+                bg: useColorModeValue(
+                  'rgba(181, 2, 2, 0.9)',
+                  'rgba(181, 2, 2, 0.9)'
+                )
+              }}
             />
             <IconButton
               as={Link}
               href={'#'}
               aria-label='Instagram'
               icon={<FaInstagram />}
-              bg={useColorModeValue('gray.700', 'gray.600')}
+              bg={useColorModeValue('rgb(181, 2, 2)', 'rgb(181, 2, 2)')}
               color={'white'}
-              _hover={{ bg: useColorModeValue('gray.600', 'gray.500') }}
+              _hover={{
+                bg: useColorModeValue(
+                  'rgba(181, 2, 2, 0.9)',
+                  'rgba(181, 2, 2, 0.9)'
+                )
+              }}
             />
           </Stack>
         </Stack>
@@ -91,7 +113,7 @@ const Footer = () => {
           <Text fontSize='12px'>
             Desarrollado por{' '}
             <Link
-              href={'https://www.linkedin.com/in/matiasjuncos/'}
+              href='https://www.linkedin.com/in/matiasjuncos/'
               target='_blank'
               style={{ textDecoration: 'underline' }}
             >

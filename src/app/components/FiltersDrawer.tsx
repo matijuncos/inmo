@@ -51,26 +51,20 @@ const FiltersDrawer = ({
 
   const handleCheckboxChange = (e: any) => {
     const { name, value, checked } = e.target;
-    console.log(
-      `Checkbox Change - Name: ${name}, Value: ${value}, Checked: ${checked}`
-    );
+
     handleInputChange(name, value, checked);
   };
 
   const isChecked = (name: keyof typeof filters, value: string) => {
     const filterValue = filters[name];
-    console.log(
-      `isChecked - Name: ${name}, Value: ${value}, FilterValue: ${filterValue}`
-    );
+
     return filterValue.split(',').includes(value);
   };
 
   const handleRadioChange = (name: string) => (value: string) => {
-    console.log(`Radio Change - Name: ${name}, Value: ${value}`);
     handleInputChange(name, value, true);
   };
 
-  console.log('Filters State:', filters);
   return (
     <>
       <Drawer isOpen={isOpen} placement='left' onClose={onClose}>
@@ -94,7 +88,7 @@ const FiltersDrawer = ({
                         name='priceMin'
                         value={price.toString()}
                       >
-                        {price}
+                        {price} U$D
                       </Radio>
                     ))}
                   </Stack>
@@ -115,7 +109,7 @@ const FiltersDrawer = ({
                         name='priceMax'
                         value={price.toString()}
                       >
-                        {price}
+                        {price} U$D
                       </Radio>
                     ))}
                   </Stack>

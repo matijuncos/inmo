@@ -5,7 +5,8 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   phone: { type: String, required: false },
   fullName: { type: String, required: true },
-  admin: { type: Boolean }
+  admin: { type: Boolean },
+  propertiesOfInterest: { type: Array }
 });
 
 export default mongoose.models?.User || mongoose.model('User', UserSchema);

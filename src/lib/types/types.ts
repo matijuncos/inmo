@@ -24,6 +24,10 @@ export interface Property {
   bathrooms: number;
   available: boolean;
   interestedUsers: any[];
+  coords?: {
+    lat: number;
+    lon: number;
+  };
 }
 
 export interface Customer {

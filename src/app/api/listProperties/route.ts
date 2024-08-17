@@ -57,7 +57,6 @@ export async function GET(request: Request) {
     filters.category = { $in: categoryValues };
   }
 
-  console.log('filters', JSON.stringify(filters));
   try {
     await connectToDatabase();
     const properties = await Property.find(filters).populate(
