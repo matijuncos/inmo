@@ -15,9 +15,9 @@ function addCacheHeaders(response: NextResponse) {
 
 export async function middleware(req: NextRequest) {
   console.log('middleware!');
-  console.log('Cookies:', req.cookies); // Log all cookies to see what's being sent
+  console.log('Cookies:', req.cookies);
   const token = req.cookies.get('token');
-  console.log('Token:', token); // Log the token to check if it's undefined
+  console.log('Token:', token);
 
   const protectedPaths = ['/admin', '/match'];
   const { pathname } = req.nextUrl;

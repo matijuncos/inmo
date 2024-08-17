@@ -35,7 +35,8 @@ export default function Home() {
       setUser(res.data);
       setTimeout(() => {
         router.push('/match');
-      }, 1000);
+        console.log('deberia estar navegando');
+      }, 500);
     } catch (error: any) {
       setErrorMessage(error.response.data.message);
       console.log(error);

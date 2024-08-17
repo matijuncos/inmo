@@ -119,11 +119,19 @@ const Hero = () => {
             </motion.div>
             <Flex
               w='100%'
-              justifyContent='space-evenly'
+              justifyContent='space-between'
               alignItems='flex-start'
               m={['16px auto', '32px auto 18px auto']}
             >
-              <motion.div variants={itemVariants}>
+              <motion.div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  flex: '1'
+                }}
+                variants={itemVariants}
+              >
                 <Box
                   width={['80px', '120px']}
                   display='flex'
@@ -143,13 +151,22 @@ const Hero = () => {
                   m=' 8px auto auto auto'
                   textAlign='center'
                   color='white'
+                  fontSize={['12px', '18px']}
                   fontWeight={600}
                 >
                   Hacé match!
                 </Text>
               </motion.div>
 
-              <motion.div variants={itemVariants}>
+              <motion.div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  flex: '1'
+                }}
+                variants={itemVariants}
+              >
                 <Box
                   width={['80px', '120px']}
                   display='flex'
@@ -170,6 +187,7 @@ const Hero = () => {
                   m=' 8px auto auto auto'
                   textAlign='center'
                   color='white'
+                  fontSize={['12px', '18px']}
                   fontWeight={600}
                 >
                   Comunicate con <br />
@@ -177,7 +195,15 @@ const Hero = () => {
                 </Text>
               </motion.div>
 
-              <motion.div variants={itemVariants}>
+              <motion.div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  flex: '1'
+                }}
+                variants={itemVariants}
+              >
                 <Box
                   width={['80px', '120px']}
                   display='flex'
@@ -197,6 +223,7 @@ const Hero = () => {
                   fontWeight={600}
                   m=' 8px auto auto auto'
                   textAlign='center'
+                  fontSize={['12px', '18px']}
                   color='white'
                 >
                   Conocé tu <br />

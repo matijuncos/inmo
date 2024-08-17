@@ -73,6 +73,7 @@ export default function Home() {
   const notify = (string: string) =>
     toast(string, { theme: 'dark', hideProgressBar: true });
   const getAllProperties = async (filt: object) => {
+    console.log('aca');
     onClose();
 
     setLoading(true);
@@ -86,6 +87,7 @@ export default function Home() {
     } catch (error) {
       console.log(error);
     } finally {
+      console.log('aca 2');
       setLoading(false);
     }
   };
@@ -278,7 +280,7 @@ export default function Home() {
             />
           </Box> */}
           {!!listOfLikedProperties.length && (
-            <Box position='absolute' top='20px'>
+            <Box position='absolute' top='20px' left='10px'>
               <IconButton
                 aria-label='filters'
                 ml='36px'
@@ -430,7 +432,7 @@ export default function Home() {
                 )}
               </div>
               {!!db?.[currentIndex]?.images?.length && hasMainFeatures && (
-                <Box my='16px'>
+                <Box my='16px' w='100%'>
                   <Carousel
                     images={db?.[currentIndex]?.images}
                     setIsModalOpen={setIsModalOpen}

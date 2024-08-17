@@ -157,11 +157,11 @@ const ContactForm = () => {
             />
           </FormControl>
           <RadioGroup
-            defaultValue='Quiero Alquilar'
+            defaultValue='Quiero Comprar'
             value={tipoConsulta}
             onChange={setTipoConsulta}
           >
-            <Stack spacing={5} direction='row'>
+            <Stack spacing={5} direction={{ base: 'column', md: 'row' }}>
               <Radio value='Quiero Alquilar'>Quiero Alquilar</Radio>
               <Radio value='Quiero Comprar'>Quiero Comprar</Radio>
               <Radio value='Quiero Vender'>Quiero Vender</Radio>

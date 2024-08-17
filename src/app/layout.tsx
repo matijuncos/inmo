@@ -36,7 +36,8 @@ export default function RootLayout({
               }}
             >
               <div>
-                <Header />
+                <Header className='desktop-header' />
+                <Header className='mobile-header' />
                 {children}
               </div>
               <Footer />

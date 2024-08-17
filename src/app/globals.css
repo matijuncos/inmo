@@ -33,6 +33,8 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .row>* {
@@ -45,7 +47,7 @@ body {
 }
 
 .cardContainer {
-  width: 660px;
+  width:85vw;
   height: 450px;
   position: relative;  
   margin: 28px auto;
@@ -138,6 +140,9 @@ body {
 
 .app-container {
   position: relative;
+  max-width: 650px;
+  margin: auto;
+  width: 100%;
 }
 
 .buttons-container {
@@ -179,11 +184,6 @@ body {
 
 .small-image:hover {
   transform: scale(0.9);
-}
-@media (max-width: 625px) {
-  .buttons {
-    flex-direction: column;
-  }
 }
 
 .buttons button {
@@ -263,4 +263,24 @@ body {
 
 .image-container:hover .property-image {
   opacity: 0.9;
+}
+
+
+@media (max-width: 970px) {
+  .navbar-brand-name {
+    display: none;
+  }
+}
+
+@media (max-width: 650px) {
+  .desktop-header{
+    display: none !important;
+   }
+}
+
+
+@media (max-width: 625px) {
+  .buttons {
+    flex-direction: column;
+  }
 }
