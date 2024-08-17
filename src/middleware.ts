@@ -19,7 +19,7 @@ export async function middleware(req: NextRequest) {
   const token = req.cookies.get('token');
   console.log('Token:', token);
 
-  const protectedPaths = ['/admin', '/match'];
+  const protectedPaths = ['/admin'];
   const { pathname } = req.nextUrl;
   if (pathname.startsWith('/api')) {
     const response = NextResponse.next();
@@ -43,5 +43,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin', '/match', '/admin/edit/:id']
+  matcher: ['/admin', '/admin/edit/:id']
 };

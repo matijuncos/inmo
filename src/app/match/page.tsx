@@ -28,6 +28,7 @@ import FiltersDrawer from '../components/FiltersDrawer';
 import LikedPropertiesDrawer from '../components/LikedProperties';
 import { useInmoCtx } from '../context/InmoContext';
 import CardContent from '../components/CardContent';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [db, setDb] = useState<Property[] | null>(null);
@@ -50,6 +51,7 @@ export default function Home() {
   const currentIndexRef = useRef(currentIndex);
   const { user } = useInmoCtx();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const router = useRouter();
   const {
     isOpen: isLikedDrawerOpen,
     onOpen: onLikedDrawerOpen,
@@ -73,7 +75,6 @@ export default function Home() {
   const notify = (string: string) =>
     toast(string, { theme: 'dark', hideProgressBar: true });
   const getAllProperties = async (filt: object) => {
-    console.log('aca');
     onClose();
 
     setLoading(true);
@@ -87,7 +88,6 @@ export default function Home() {
     } catch (error) {
       console.log(error);
     } finally {
-      console.log('aca 2');
       setLoading(false);
     }
   };
@@ -108,10 +108,14 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    console.log(user?.userId);
     if (user?.userId) {
       getUserPreferedProperties();
+    } else if (!user?.userId && !loading) {
+      notify('Iniciá sesión para hacer match!');
+      router.push('/login');
     }
-  }, [user?.userId]);
+  }, [user?.userId, loading]);
 
   const updateCurrentIndex = (val: number) => {
     setCurrentIndex(val);
@@ -263,6 +267,7 @@ export default function Home() {
         <Flex
           w='100%'
           height='100%'
+          minH='450px'
           justifyContent='center'
           alignItems='center'
         >

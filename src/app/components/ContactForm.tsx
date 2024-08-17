@@ -10,7 +10,8 @@ import {
   RadioGroup,
   Stack,
   Textarea,
-  Text
+  Text,
+  Spinner
 } from '@chakra-ui/react';
 import { FiPhone, FiMail } from 'react-icons/fi';
 import React, { useState } from 'react';
@@ -31,7 +32,7 @@ const ContactForm = () => {
     email: ''
   });
   const router = useRouter();
-
+  const [loading, setLoading] = useState(false);
   const notify = (string: string) =>
     toast(string, { theme: 'dark', hideProgressBar: true });
 
@@ -39,18 +40,22 @@ const ContactForm = () => {
     nombre === '' || email === '' || !/^\S+@\S+\.\S+$/.test(email);
 
   const submitForm = async () => {
-    setError({ nombre: '', email: '' }); // Initialize error state to empty
+    setError({ nombre: '', email: '' });
     if (nombre === '') {
       setError((prev) => ({ ...prev, nombre: 'El nombre es obligatorio' }));
+      return;
     }
     if (email === '' || !/^\S+@\S+\.\S+$/.test(email)) {
       setError((prev) => ({
         ...prev,
         email: 'El email ingresado no es válido'
       }));
+      return;
     }
     if (isDisabled) return;
     try {
+      setLoading(true);
+
       await axios.post('/api/contactForm', {
         nombre,
         email,
@@ -65,6 +70,8 @@ const ContactForm = () => {
     } catch (error) {
       notify('Hubo un error y estamos trabajando para resolverlo');
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -157,7 +164,7 @@ const ContactForm = () => {
             />
           </FormControl>
           <RadioGroup
-            defaultValue='Quiero Comprar'
+            defaultValue='Quiero Alquilar'
             value={tipoConsulta}
             onChange={setTipoConsulta}
           >
@@ -171,10 +178,11 @@ const ContactForm = () => {
           <Button
             bg='rgb(189, 2, 20)'
             color='white'
+            disabled={loading}
             onClick={submitForm}
             size='lg'
           >
-            ENVIAR CONSULTA
+            {loading ? <Spinner /> : 'ENVIAR CONSULTA'}
           </Button>
         </Stack>
       </Box>
