@@ -266,6 +266,14 @@ body {
 }
 
 
+.whats-app {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  color: green;
+  z-index: 999;
+}
+
 @media (max-width: 970px) {
   .navbar-brand-name {
     display: none;
@@ -274,6 +282,19 @@ body {
 
 @media (max-width: 650px) {
   .desktop-header{
+    display: none !important;
+   }
+   .cta-button {
+    margin-top: 16px;
+   }
+   .description {
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+   }
+}
+@media (min-width: 650px) {
+  .mobile-header {
     display: none !important;
    }
 }

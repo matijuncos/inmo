@@ -16,11 +16,16 @@ const Footer = () => {
     <Box
       className='footer'
       bg={useColorModeValue('white', 'white')}
-      color={useColorModeValue('rgb(181, 2, 2)', 'rgb(181, 2, 2)')}
+      color={useColorModeValue('white', 'white')}
       py={10}
       boxShadow='xl'
+      backgroundColor='rgb(181, 2, 2)'
     >
-      <Container as={Stack} maxW='calc(100vw - 10rem)' spacing={4}>
+      <Container
+        as={Stack}
+        maxW={{ base: '90vw', md: 'calc(100vw - 10rem)' }}
+        spacing={4}
+      >
         <Stack
           direction={{ base: 'column', md: 'row' }}
           spacing={4}
@@ -42,10 +47,10 @@ const Footer = () => {
           align={'center'}
         >
           <Text fontSize={'sm'}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec
-            odio. Praesent libero. Sed cursus ante dapibus diam.
+            Este footer hay que mejorarlo porque el diseño esta bastante fulero,
+            pero no tanto como los alrededores de la casa de don bosco
           </Text>
-          <Stack direction={'row'} spacing={6}>
+          <Stack direction={'row'} spacing={1}>
             <IconButton
               as={Link}
               href={'#'}

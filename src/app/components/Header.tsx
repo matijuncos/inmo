@@ -10,6 +10,7 @@ import {
   Flex,
   IconButton,
   Image,
+  MenuIcon,
   Text
 } from '@chakra-ui/react';
 import Link from 'next/link';
@@ -19,6 +20,7 @@ import { FaHamburger, FaList, FaSignOutAlt } from 'react-icons/fa';
 import { FaHome, FaHeart, FaPhone } from 'react-icons/fa';
 import axios from 'axios';
 import { useInmoCtx } from '../context/InmoContext';
+import { BiMenu } from 'react-icons/bi';
 const Header = ({ className }: { className: string }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -161,63 +163,76 @@ const Header = ({ className }: { className: string }) => {
       width='100%'
       padding='8px'
       boxShadow='xl'
+      alignItems='center'
       justifyContent='space-between'
       className={className}
     >
-      <IconButton
-        aria-label='Open Menu'
-        icon={<FaHamburger />}
-        display={{ base: 'flex', md: 'none' }} // Adjust breakpoints as needed
-        onClick={toggleDrawer}
-      />
+      <Box
+        borderRadius='100%'
+        display='grid'
+        width='30px'
+        height='30px'
+        placeItems='center'
+      >
+        <Image
+          src='santamarina.jpeg'
+          objectFit='cover'
+          width='100%'
+          alt='logo - santamarina inmuebles'
+          height='100%'
+        />
+      </Box>
+
       <Drawer isOpen={isDrawerOpen} placement='left' onClose={toggleDrawer}>
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader>
-            <Box
-              borderRadius='100%'
-              display='grid'
-              width='30px'
-              height='30px'
-              placeItems='center'
-            >
-              <Image
-                src='santamarina.jpeg'
-                objectFit='cover'
-                width='100%'
-                alt='logo - santamarina inmuebles'
-                height='100%'
-              />
-            </Box>
-            <Text color='#B50202' fontSize='16px'>
-              Inmobiliaria Santamarina <br />& Asoc.
-            </Text>
+            <Flex gap='12px'>
+              <Box
+                borderRadius='100%'
+                display='grid'
+                width='30px'
+                height='30px'
+                placeItems='center'
+              >
+                <Image
+                  src='santamarina.jpeg'
+                  objectFit='cover'
+                  width='100%'
+                  alt='logo - santamarina inmuebles'
+                  height='100%'
+                />
+              </Box>
+              <Text color='#B50202' fontSize='12px'>
+                Inmobiliaria Santamarina <br />& Asoc.
+              </Text>
+            </Flex>
           </DrawerHeader>
           <DrawerBody>
-            <Flex direction='column' gap='24px'>
+            <Flex direction='column' height='100%' gap='24px'>
               <Link href='/' onClick={toggleDrawer}>
-                <Flex alignItems='center' gap='2'>
-                  <FaHome />
+                <Flex color='#B50202' alignItems='center' gap='2'>
+                  <FaHome color='#B50202' />
                   Inicio
                 </Flex>
               </Link>
               <Link href='/match' onClick={toggleDrawer}>
-                <Flex alignItems='center' gap='2'>
-                  <FaHeart />
+                <Flex color='#B50202' alignItems='center' gap='2'>
+                  <FaHeart color='#B50202' />
                   Match!
                 </Flex>
               </Link>
               <Link href='/contact' onClick={toggleDrawer}>
-                <Flex alignItems='center' gap='2'>
-                  <FaPhone />
+                <Flex color='#B50202' alignItems='center' gap='2'>
+                  <FaPhone color='#B50202' />
                   Contacto
                 </Flex>
               </Link>
               {isPathAdminLink('/admin') && (
                 <Link href='/admin' onClick={toggleDrawer}>
-                  <Flex alignItems='center' gap='2'>
-                    <FaList />
+                  <Flex color='#B50202' alignItems='center' gap='2'>
+                    <FaList color='#B50202' />
                     Admin
                   </Flex>
                 </Link>
@@ -225,6 +240,8 @@ const Header = ({ className }: { className: string }) => {
               {!pathsToExcludeSignOut.includes(pathname) && user && (
                 <Flex
                   alignItems='center'
+                  mt='auto'
+                  mb='8px'
                   gap='6px'
                   onClick={() => {
                     signOut();
@@ -232,14 +249,23 @@ const Header = ({ className }: { className: string }) => {
                   }}
                   minWidth='fit-content'
                 >
-                  <FaSignOutAlt />
-                  <Text fontWeight={600}>Cerrar Sesión</Text>
+                  <FaSignOutAlt color='#B50202' />
+                  <Text fontWeight={600} color='#B50202'>
+                    Cerrar Sesión
+                  </Text>
                 </Flex>
               )}
             </Flex>
           </DrawerBody>
         </DrawerContent>
       </Drawer>
+      <IconButton
+        aria-label='Open Menu'
+        backgroundColor='transparent'
+        icon={<BiMenu color='#B50202' size={28} />}
+        display={{ base: 'flex', md: 'none' }} // Adjust breakpoints as needed
+        onClick={toggleDrawer}
+      />
     </Flex>
   );
 };

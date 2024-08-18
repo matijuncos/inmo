@@ -63,7 +63,7 @@ export async function POST(request: Request) {
     <p class="message">
       Tu consulta fue enviada y será respondida en breve. Muchas gracias por contactarnos.
     </p>
-    <p class="footer">Saludos cordiales,<br>El Equipo de Soporte</p>
+    <p class="footer">Saludos cordiales,<br>El Equipo de Santamarina $ Asoc.</p>
   </div>
 </body>
 </html>

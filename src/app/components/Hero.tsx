@@ -254,6 +254,7 @@ const Hero = () => {
                 color: 'whitesmoke',
                 fontWeight: '600'
               }}
+              className='cta-button'
               variants={itemVariants}
             >
               ¡Empezar!

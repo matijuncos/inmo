@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { ChakraProvider } from '@chakra-ui/react';
+import { Box, ChakraProvider } from '@chakra-ui/react';
 import Header from './components/Header';
 const inter = Inter({ subsets: ['latin'] });
 import { ToastContainer } from 'react-toastify';
@@ -9,6 +9,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import Footer from './components/Footer';
 import { InmoProvider } from './context/InmoContext';
+import { FaWhatsapp } from 'react-icons/fa';
+import { useState } from 'react';
+import WhatsAppModal from './components/WhatsAppModal';
+import WhatsAppButton from './components/WhatsAppButton';
 
 export const metadata: Metadata = {
   title: 'Inmobiliaria Santamarina & Asoc.',
@@ -39,9 +43,11 @@ export default function RootLayout({
                 <Header className='desktop-header' />
                 <Header className='mobile-header' />
                 {children}
+                <WhatsAppModal />
               </div>
               <Footer />
             </div>
+            <WhatsAppButton />
           </ChakraProvider>
         </InmoProvider>
       </body>

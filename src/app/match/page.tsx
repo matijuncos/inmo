@@ -140,7 +140,6 @@ export default function Home() {
       (user) => user?._id === userId
     );
 
-    console.log(property.interestedUsers, userId);
     if (direction === directions.right && userId && !alreadyLiked) {
       try {
         await Promise.all([
@@ -263,6 +262,23 @@ export default function Home() {
 
   return (
     <main>
+      {!!listOfLikedProperties.length && (
+        <Box
+          position='absolute'
+          display={{ base: 'block', md: 'none' }}
+          top='8px'
+          right='52px'
+          zIndex='999'
+        >
+          <IconButton
+            aria-label='filters'
+            bg='#B50202'
+            ml='36px'
+            icon={<FaHeart color='white' size='12px' />}
+            onClick={() => onLikedDrawerOpen()}
+          />
+        </Box>
+      )}
       {loading ? (
         <Flex
           w='100%'
@@ -274,8 +290,25 @@ export default function Home() {
           <Loader />
         </Flex>
       ) : (
-        <Box className='app-container'>
-          {/*  <Box position='absolute'>
+        <Box position='relative'>
+          {!!listOfLikedProperties.length && (
+            <Box
+              position='absolute'
+              display={{ base: 'none', md: 'block' }}
+              top='15px'
+              left='0px'
+              zIndex='999'
+            >
+              <IconButton
+                aria-label='filters'
+                ml='36px'
+                icon={<FaHeart color='red' />}
+                onClick={() => onLikedDrawerOpen()}
+              />
+            </Box>
+          )}
+          <Box className='app-container'>
+            {/*  <Box position='absolute'>
             <IconButton
               aria-label='filters'
               ml='36px'
@@ -284,169 +317,165 @@ export default function Home() {
               onClick={() => onOpen()}
             />
           </Box> */}
-          {!!listOfLikedProperties.length && (
-            <Box position='absolute' top='20px' left='10px'>
-              <IconButton
-                aria-label='filters'
-                ml='36px'
-                icon={<FaHeart color='' />}
-                onClick={() => onLikedDrawerOpen()}
-              />
-            </Box>
-          )}
-          <LikedPropertiesDrawer
-            properties={listOfLikedProperties}
-            isOpen={isLikedDrawerOpen}
-            onClose={onLikedDraweClose}
-          />
-          <FiltersDrawer
-            isOpen={isOpen}
-            onClose={onClose}
-            onOpen={onOpen}
-            filters={filters}
-            handleInputChange={handleInputChange}
-            handleFilterReset={handleFilterReset}
-            getAllProperties={getAllProperties}
-            aggFilters={aggFilters}
-          />
 
-          <ImageModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            imageUrl={selectedImage}
-          />
-          <InfoModal
-            information={db?.[currentIndex]}
-            onClose={() => setIsInfoModalOpen(false)}
-            isOpen={isInfoModalOpen}
-          />
-          {user && (
-            <div className='flex'>
-              <div className='cardContainer'>
-                {db?.map((character, index) => (
-                  <TinderCard
-                    ref={childRefs[index] as React.RefObject<any>}
-                    className='swipe'
-                    key={character.title}
-                    preventSwipe={
-                      hasMainFeatures
-                        ? [directions.up, directions.down]
-                        : [
-                            directions.up,
-                            directions.down,
-                            directions.left,
-                            directions.right
-                          ]
-                    }
-                    swipeRequirementType='position'
-                    onSwipe={(dir) =>
-                      swiped(dir, character.title, index, character)
-                    }
-                    onCardLeftScreen={() => outOfFrame(character.title, index)}
+            <LikedPropertiesDrawer
+              properties={listOfLikedProperties}
+              isOpen={isLikedDrawerOpen}
+              onClose={onLikedDraweClose}
+            />
+            <FiltersDrawer
+              isOpen={isOpen}
+              onClose={onClose}
+              onOpen={onOpen}
+              filters={filters}
+              handleInputChange={handleInputChange}
+              handleFilterReset={handleFilterReset}
+              getAllProperties={getAllProperties}
+              aggFilters={aggFilters}
+            />
+
+            <ImageModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              imageUrl={selectedImage}
+            />
+            <InfoModal
+              information={db?.[currentIndex]}
+              onClose={() => setIsInfoModalOpen(false)}
+              isOpen={isInfoModalOpen}
+            />
+            {user && (
+              <div className='flex'>
+                <div className='cardContainer'>
+                  {db?.map((character, index) => (
+                    <TinderCard
+                      ref={childRefs[index] as React.RefObject<any>}
+                      className='swipe'
+                      key={character.title}
+                      preventSwipe={
+                        hasMainFeatures
+                          ? [directions.up, directions.down]
+                          : [
+                              directions.up,
+                              directions.down,
+                              directions.left,
+                              directions.right
+                            ]
+                      }
+                      swipeRequirementType='position'
+                      onSwipe={(dir) =>
+                        swiped(dir, character.title, index, character)
+                      }
+                      onCardLeftScreen={() =>
+                        outOfFrame(character.title, index)
+                      }
+                    >
+                      <CardContent
+                        hasMainFeatures={Boolean(hasMainFeatures)}
+                        setIsInfoModalOpen={setIsInfoModalOpen}
+                        property={character}
+                      />
+                    </TinderCard>
+                  ))}
+                </div>
+                <br />
+                {!hasMainFeatures && (
+                  <Box m='auto'>
+                    <Text fontSize='24px' fontWeight={600} mt='16px'>
+                      Pronto tendremos más propiedades.
+                    </Text>
+                  </Box>
+                )}
+                <div className='buttons-container'>
+                  <button
+                    className='button button-undo'
+                    disabled={!canGoBack}
+                    style={{
+                      cursor: !canGoBack ? 'not-allowed' : 'pointer',
+                      backgroundColor: !canGoBack ? 'grey' : 'whitesmoke'
+                    }}
+                    onClick={() => goBack()}
                   >
-                    <CardContent
-                      hasMainFeatures={Boolean(hasMainFeatures)}
-                      setIsInfoModalOpen={setIsInfoModalOpen}
-                      property={character}
-                    />
-                  </TinderCard>
-                ))}
-              </div>
-              <br />
-              {!hasMainFeatures && (
-                <Box m='auto'>
-                  <Text fontSize='24px' fontWeight={600} mt='16px'>
-                    Pronto tendremos más propiedades.
-                  </Text>
-                </Box>
-              )}
-              <div className='buttons-container'>
-                <button
-                  className='button button-undo'
-                  disabled={!canGoBack}
-                  style={{
-                    cursor: !canGoBack ? 'not-allowed' : 'pointer',
-                    backgroundColor: !canGoBack ? 'grey' : 'whitesmoke'
-                  }}
-                  onClick={() => goBack()}
-                >
-                  <FaArrowRotateLeft size={24} color='#886602' />
-                </button>
-                {hasMainFeatures && (
-                  <>
-                    <button
-                      className='button button-left'
-                      disabled={!canSwipe}
-                      style={{
-                        backgroundColor: !canSwipe ? 'black' : 'whitesmoke'
-                      }}
-                      onClick={() => swipe(directions.left)}
-                    >
-                      <FaThumbsDown size={24} color='#BB2D3E' />
-                    </button>
-                    <button
-                      className='button button-right'
-                      disabled={!canSwipe}
-                      style={{
-                        backgroundColor: !canSwipe ? 'black' : 'whitesmoke'
-                      }}
-                      onClick={() => swipe(directions.right)}
-                    >
-                      <FaThumbsUp size={24} color='rgb(10,101,0)' />
-                    </button>
-                  </>
-                )}
-              </div>
-              <div className='info-container'>
-                {hasMainFeatures && (
-                  <>
-                    <div className='description'>
-                      <IconAndData
-                        Icon={FaBath}
-                        textValue={
-                          'Baños: ' + db?.[currentIndex]?.bathrooms?.toString()
-                        }
-                      />
-                      <IconAndData
-                        Icon={FaHouse}
-                        textValue={
-                          'Ambientes: ' + db?.[currentIndex]?.rooms?.toString()
-                        }
-                      />
-                      <IconAndData
-                        Icon={FaBed}
-                        textValue={
-                          'Dormitorios: ' +
-                          db?.[currentIndex]?.bedrooms?.toString()
-                        }
-                      />
-                      <div
-                        className='card-more-info'
-                        onClick={() => setIsInfoModalOpen(true)}
+                    <FaArrowRotateLeft size={24} color='#886602' />
+                  </button>
+                  {hasMainFeatures && (
+                    <>
+                      <button
+                        className='button button-left'
+                        disabled={!canSwipe}
+                        style={{
+                          backgroundColor: !canSwipe ? 'black' : 'whitesmoke'
+                        }}
+                        onClick={() => swipe(directions.left)}
                       >
-                        <FaInfo /> Más info
+                        <FaThumbsDown size={24} color='#BB2D3E' />
+                      </button>
+                      <button
+                        className='button button-right'
+                        disabled={!canSwipe}
+                        style={{
+                          backgroundColor: !canSwipe ? 'black' : 'whitesmoke'
+                        }}
+                        onClick={() => swipe(directions.right)}
+                      >
+                        <FaThumbsUp size={24} color='rgb(10,101,0)' />
+                      </button>
+                    </>
+                  )}
+                </div>
+                <div className='info-container'>
+                  {hasMainFeatures && (
+                    <>
+                      <div className='description'>
+                        <IconAndData
+                          Icon={FaBath}
+                          textValue={
+                            'Baños: ' +
+                            db?.[currentIndex]?.bathrooms?.toString()
+                          }
+                        />
+                        <IconAndData
+                          Icon={FaHouse}
+                          textValue={
+                            'Ambientes: ' +
+                            db?.[currentIndex]?.rooms?.toString()
+                          }
+                        />
+                        <IconAndData
+                          Icon={FaBed}
+                          textValue={
+                            'Dormitorios: ' +
+                            db?.[currentIndex]?.bedrooms?.toString()
+                          }
+                        />
+                        <div
+                          className='card-more-info'
+                          onClick={() => setIsInfoModalOpen(true)}
+                        >
+                          <FaInfo /> Más info
+                        </div>
                       </div>
-                    </div>
-                    <Box
-                      maxW='660px'
-                      m='auto'
-                      className='flex-in-card'
-                      boxShadow='xl'
-                    ></Box>
-                  </>
+                      <Box
+                        maxW='660px'
+                        m='auto'
+                        className='flex-in-card'
+                        boxShadow='xl'
+                      ></Box>
+                    </>
+                  )}
+                </div>
+                {!!db?.[currentIndex]?.images?.length && hasMainFeatures && (
+                  <Box my='16px' w='100%'>
+                    <Carousel
+                      images={db?.[currentIndex]?.images}
+                      setIsModalOpen={setIsModalOpen}
+                      setSelectedImage={setSelectedImage}
+                    />
+                  </Box>
                 )}
               </div>
-              {!!db?.[currentIndex]?.images?.length && hasMainFeatures && (
-                <Box my='16px' w='100%'>
-                  <Carousel
-                    images={db?.[currentIndex]?.images}
-                    setIsModalOpen={setIsModalOpen}
-                    setSelectedImage={setSelectedImage}
-                  />
-                </Box>
-              )}
-            </div>
-          )}
+            )}
+          </Box>
         </Box>
       )}
     </main>

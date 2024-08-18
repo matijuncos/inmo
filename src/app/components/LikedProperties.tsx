@@ -29,6 +29,16 @@ const LikedPropertiesDrawer = ({
         my='6px'
         border='solid grey 1px'
         borderRadius='3px'
+        transition='all ease 0.2s'
+        cursor='pointer'
+        _hover={{
+          transform: 'scale(1.02)'
+        }}
+        onClick={() =>
+          alert(
+            'fer, esto todavía no nada, pero te llevaria a una pagina para ver la prop. Hacé click en ok para seguir'
+          )
+        }
       >
         <Box
           backgroundImage={`url(${item.images?.[0]})`}

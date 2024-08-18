@@ -8,6 +8,8 @@ import path from 'path';
 type InmoContextProps = {
   user: any;
   setUser: Function;
+  isWhatsappModalOpen: boolean;
+  setIsWhatsappModalOpen: Function;
 };
 
 type InmoProviderProps = {
@@ -20,6 +22,7 @@ export const InmoProvider: ({ children }: InmoProviderProps) => JSX.Element = ({
   children
 }: InmoProviderProps) => {
   const [user, setUser] = useState(null);
+  const [isWhatsappModalOpen, setIsWhatsappModalOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -45,7 +48,9 @@ export const InmoProvider: ({ children }: InmoProviderProps) => JSX.Element = ({
   }, []);
 
   return (
-    <InmoContext.Provider value={{ user, setUser }}>
+    <InmoContext.Provider
+      value={{ user, setUser, isWhatsappModalOpen, setIsWhatsappModalOpen }}
+    >
       {children}
     </InmoContext.Provider>
   );
