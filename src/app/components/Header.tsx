@@ -64,7 +64,7 @@ const Header = ({ className }: { className: string }) => {
               placeItems='center'
             >
               <Image
-                src='santamarina.jpeg'
+                src='/santamarina.jpeg'
                 objectFit='cover'
                 width='100%'
                 alt='logo - santamarina inmuebles'
@@ -175,7 +175,7 @@ const Header = ({ className }: { className: string }) => {
         placeItems='center'
       >
         <Image
-          src='santamarina.jpeg'
+          src='/santamarina.jpeg'
           objectFit='cover'
           width='100%'
           alt='logo - santamarina inmuebles'
@@ -197,7 +197,7 @@ const Header = ({ className }: { className: string }) => {
                 placeItems='center'
               >
                 <Image
-                  src='santamarina.jpeg'
+                  src='/santamarina.jpeg'
                   objectFit='cover'
                   width='100%'
                   alt='logo - santamarina inmuebles'

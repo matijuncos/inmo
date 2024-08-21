@@ -30,10 +30,9 @@ const WhatsAppModal = () => {
       setTimeout(() => setMessageEmptyError(false), 3000);
     } else {
       // Regex expression to remove all characters which are NOT alphanumeric
-      let number = '3512011794';
-
+      // https://api.whatsapp.com/send?phone=543512011794&text=Muchas%20gracias%20por%20comunicarte%20con%20Inmobiliaria%20SantaMarina%20y%20asociados.%20Nos%20pondremos%20en%20contacto%20a%20la%20brevedad.
       // Appending the phone number to the URL
-      let url = `https://wa.me/${number}`;
+      let url = 'https://api.whatsapp.com/send?phone=543512011794';
       url += `&text=${encodeURI(message)}`;
       window.open(url);
       setIsWhatsappModalOpen(false);

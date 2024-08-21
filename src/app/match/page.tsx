@@ -261,12 +261,12 @@ export default function Home() {
   };
 
   return (
-    <main>
+    <main className='match-page'>
       {!!listOfLikedProperties.length && (
         <Box
           position='absolute'
           display={{ base: 'block', md: 'none' }}
-          top='8px'
+          top='-48px'
           right='52px'
           zIndex='999'
         >

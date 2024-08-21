@@ -143,6 +143,7 @@ body {
   max-width: 650px;
   margin: auto;
   width: 100%;
+  z-index: 30;
 }
 
 .buttons-container {
@@ -264,6 +265,27 @@ body {
 .image-container:hover .property-image {
   opacity: 0.9;
 }
+
+.match-page {
+  position: relative;
+}
+
+.match-page::after {
+  content: '';
+  background-image: url('../../public/house-render.jpg');
+  background-size: cover ;
+  width: 100%;
+  position: absolute;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  opacity: 0.3;
+  backdrop-filter: sepia(100%) saturate(0) brightness(350%);
+}
+
 
 
 .whats-app {
