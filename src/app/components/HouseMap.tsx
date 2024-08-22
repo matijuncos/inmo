@@ -1,3 +1,4 @@
+'use client';
 import { Property } from '@/lib/types/types';
 import React from 'react';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
@@ -15,7 +16,7 @@ const HouseMap = (props: Props) => {
         information?.coords?.lat || -32,
         information?.coords?.lon || -64
       ]}
-      zoom={13}
+      zoom={12}
       scrollWheelZoom={false}
       style={{ height: '300px', width: '100%' }}
     >

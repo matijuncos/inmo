@@ -30,22 +30,22 @@ const CardContent = ({
             border='solid 6px green'
             borderRadius='16px'
             backgroundColor='white'
-            p='14px'
+            p={['6px', '14px']}
             position='absolute'
-            top={'62px'}
-            right={'14px'}
+            top={['30px', '62px']}
+            right={['0px', '14px']}
             transform='rotate(30deg)'
             boxShadow='4px 4px 4px rgba(0, 0, 0, 0.3)'
             color='green'
             fontWeight={700}
-            fontSize='24px'
+            fontSize={['16px', '18px', '20px', '24px']}
           >
             <Text>Ya hiciste Match!</Text>
           </Box>
         )}
         {/*         {hasMainFeatures && (
           <Flex className='flex-in-card' boxShadow='xl'>
-            <Text color='black' pl='8px' fontSize='20px' fontWeight={600}>
+            <Text color='black' pl='8px' fontSize={['16px', '18px', '20px', '24px']} fontWeight={600}>
               {property.title}
             </Text>
             <div

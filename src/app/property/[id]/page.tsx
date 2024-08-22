@@ -1,9 +1,9 @@
-import HouseMap from '@/app/components/HouseMap';
 import IconAndData from '@/app/components/IconAndData';
 import ImagesPreview from '@/app/components/ImagesPreview';
 import { getOneProperty } from '@/lib/getOneProperty';
 import connectToDatabase from '@/lib/mongodb';
 import { Box, Button, Flex, Image, Text } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
 import React, { Suspense, useState } from 'react';
 import {
   FaBurn,
@@ -23,6 +23,10 @@ import {
   FaDoorOpen,
   FaRulerCombined
 } from 'react-icons/fa6';
+const HouseMap = dynamic(() => import('../../components/HouseMap'), {
+  ssr: false
+});
+
 export default async function page({
   params: { id }
 }: {
@@ -56,46 +60,6 @@ export default async function page({
     garage,
     isPrivate
   } = property;
-  /**
-   * {
-  coords: { lon: -32.3, lat: -64 },
-  _id: new ObjectId('66653f60cb6275b18e47a4fa'),
-  title: 'Modern Condo',
-  location: '4321 Elm Street, San Francisco, CA 94102',
-  stories: 3,
-  pool: false,
-  garage: 1,
-  isPrivate: false,
-  antiquity: 5,
-  internet: true,
-  ac: true,
-  heat: false,
-  gas: false,
-  more: 'Eco-friendly materials and smart home features.',
-  category: 'Condo',
-  operationType: 'Rent',
-  rooms: '3',
-  showPrice: true,
-  coveredMeters: 150,
-  totalMenters: 180,
-  price: 3500,
-  images: [
-    'https://i.ibb.co/VYZYzvr/a2fa8145fdd2.jpg',
-    'https://i.ibb.co/hgjkn4w/656a988df7f3.jpg',
-    'https://i.ibb.co/qsNdm77/62d29171b94b.jpg',
-    'https://i.ibb.co/Kh5gXck/ce27b4d2d731.jpg'
-  ],
-  bedrooms: 2,
-  bathrooms: 2,
-  available: true,
-  interestedUsers: [
-    new ObjectId('6665f162e1e094e0fd9cc66f'),
-    new ObjectId('66aa7edfe94f0538502b1223')
-  ],
-  __v: 9,
-  totalMeters: 1200
-}
-   */
 
   return (
     <Suspense fallback='Cargando...'>
@@ -109,6 +73,7 @@ export default async function page({
         >
           {title}
         </Text>
+
         <Flex direction={['column', 'column', 'row']} gap='1rem'>
           {!!images?.length && <ImagesPreview images={images} />}
           <Box flex='1'>
@@ -184,9 +149,9 @@ export default async function page({
               <Text fontWeight={600}>Mas detalles:</Text>
               {more}
             </Box>
+
             <Flex p='16px' w='100%' gap='18px' direction={['column', 'row']}>
-              <Button>Pedí una visita</Button>
-              <Button>Contactar</Button>
+              <Button>Contactate para solicitar ver la propiedad</Button>
             </Flex>
           </Box>
         </Flex>

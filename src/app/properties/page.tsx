@@ -1,8 +1,8 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import React, { Suspense } from 'react';
-import PropertyCard from '../components/PropertyCard';
 import { getAllProperties } from '@/lib/getAllProperties';
 import { Property } from '@/lib/types/types';
+import AnimatedPropertyCard from '../components/AnimatedPropertyCard';
 
 export default async function PropertiesPage() {
   const properties: Property[] | undefined = await getAllProperties();
@@ -12,16 +12,24 @@ export default async function PropertiesPage() {
         <Text as='h2' fontWeight='700' fontSize={24}>
           Conocé nuestras propiedades.
         </Text>
-        <Flex
+        <Box
           py='2rem'
-          flexWrap='wrap'
-          flexDirection={{ base: 'column', md: 'row' }}
+          display='grid'
+          gridTemplateColumns={{
+            base: '1fr',
+            sm: 'repeat(2, 1fr)',
+            md: 'repeat(3, 1fr)',
+            lg: 'repeat(4, 1fr)'
+          }}
           gap='18px'
+          margin='auto'
         >
           {properties?.map((item, idx) => {
-            return <PropertyCard key={idx} property={item} />;
+            return (
+              <AnimatedPropertyCard key={idx} property={item} index={idx} />
+            );
           })}
-        </Flex>
+        </Box>
       </Box>
     </Suspense>
   );

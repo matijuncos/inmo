@@ -95,8 +95,12 @@ body {
   font-size: 16px;
   color: var(--color-info);
   display: flex;
-  text-decoration: underline;
   align-items: center;
+  margin: auto;
+  background-color: #B50202;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 6px;
 }
 
 
@@ -313,6 +317,12 @@ body {
     flex-direction: column;
     gap: 8px;
     align-items: center;
+   }
+   .cardContainer {
+    height: 350px;
+   }
+   .card {
+    height: 350px;
    }
 }
 @media (min-width: 650px) {
