@@ -1,10 +1,11 @@
 import IconAndData from '@/app/components/IconAndData';
 import ImagesPreview from '@/app/components/ImagesPreview';
+import SendEmailbtn from '@/app/components/SendEmailbtn';
 import { getOneProperty } from '@/lib/getOneProperty';
 import connectToDatabase from '@/lib/mongodb';
 import { Box, Button, Flex, Image, Text } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
-import React, { Suspense, useState } from 'react';
+import React, { Suspense } from 'react';
 import {
   FaBurn,
   FaCalendarAlt,
@@ -23,6 +24,7 @@ import {
   FaDoorOpen,
   FaRulerCombined
 } from 'react-icons/fa6';
+
 const HouseMap = dynamic(() => import('../../components/HouseMap'), {
   ssr: false
 });
@@ -34,7 +36,6 @@ export default async function page({
 }) {
   await connectToDatabase();
   const property = await getOneProperty(id);
-  console.log(id, property);
   const {
     coords,
     title,
@@ -46,7 +47,6 @@ export default async function page({
     bathrooms,
     images,
     coveredMeters,
-    totalMenters,
     operationType,
     rooms,
     location,
@@ -63,7 +63,7 @@ export default async function page({
 
   return (
     <Suspense fallback='Cargando...'>
-      <Box width={['95%', '90%', '85%', '80%']} margin='2rem auto'>
+      <Box width={['95%', '90%', '85%', '80%']} margin='2rem auto' pt='40px'>
         <Text
           as='h2'
           fontSize={['24px', '28px', '34px']}
@@ -90,11 +90,19 @@ export default async function page({
             >
               <IconAndData
                 Icon={FaDollarSign}
+                textValue={'Ubicación:' + location}
+              />
+              <IconAndData
+                Icon={FaDollarSign}
                 textValue={'Precio: U$D' + price?.toString()}
               />
               <IconAndData
                 Icon={FaRulerCombined}
                 textValue={'Metros totales: ' + totalMeters?.toString()}
+              />
+              <IconAndData
+                Icon={FaRulerCombined}
+                textValue={'Metros cubiertos: ' + coveredMeters?.toString()}
               />
               <IconAndData
                 Icon={FaBath}
@@ -150,9 +158,7 @@ export default async function page({
               {more}
             </Box>
 
-            <Flex p='16px' w='100%' gap='18px' direction={['column', 'row']}>
-              <Button>Contactate para solicitar ver la propiedad</Button>
-            </Flex>
+            <SendEmailbtn property={property} />
           </Box>
         </Flex>
       </Box>

@@ -17,7 +17,7 @@ const ImagesPreview = ({ images }: { images: string[] }) => {
       ></Box>
       <Flex flexWrap='wrap' gap='8px' my='8px'>
         {images.length > 1 &&
-          [...images, ...images].map((img, index) => (
+          images.map((img, index) => (
             <Box
               key={index}
               borderRadius='3px'

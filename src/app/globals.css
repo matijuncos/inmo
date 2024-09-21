@@ -74,7 +74,6 @@ body {
  pointer-events: none;
 }
 .flex-in-card {
-
   border-radius: 6px;
   bottom: 0;
   left: 0;
@@ -272,6 +271,7 @@ body {
 
 .match-page {
   position: relative;
+  padding-top: 76px;
 }
 
 .match-page::after {
@@ -330,7 +330,6 @@ body {
     display: none !important;
    }
 }
-
 
 @media (max-width: 625px) {
   .buttons {

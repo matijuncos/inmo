@@ -13,20 +13,19 @@ export async function POST(request: Request) {
         pass: userPassword
       }
     });
-    const mail = await transporter.sendMail({
+    await transporter.sendMail({
       from: process.env.MY_EMAIL,
       to: email,
       subject: `${name} Matcheaste con una propiedad!`,
       html: `<b>${message}</b>`
     });
 
-    const mail2 = await transporter.sendMail({
+    await transporter.sendMail({
       from: process.env.MY_EMAIL,
       to: process.env.MY_EMAIL,
       subject: `A ${name} le interesa una propiedad!`,
       html: `<b>${message2}</b>`
     });
-    console.log('Message sent: %s', mail.messageId);
 
     return Response.json({
       success: true

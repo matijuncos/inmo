@@ -46,6 +46,9 @@ const Header = ({ className }: { className: string }) => {
         padding='8px'
         boxShadow='xl'
         justifyContent='space-between'
+        position='fixed'
+        backgroundColor='rgba(255, 255, 255, 1)'
+        zIndex='999'
         className={className}
       >
         <Flex alignItems='center' justifyContent='space-between' w='100%'>
@@ -59,8 +62,8 @@ const Header = ({ className }: { className: string }) => {
             <Box
               borderRadius='100%'
               display='grid'
-              width='60px'
-              height='60px'
+              width='45px'
+              height='45px'
               placeItems='center'
             >
               <Image
@@ -72,7 +75,7 @@ const Header = ({ className }: { className: string }) => {
               />
             </Box>
             <Text
-              fontSize={20}
+              fontSize={16}
               fontWeight={700}
               color='#B50202'
               className='navbar-brand-name'

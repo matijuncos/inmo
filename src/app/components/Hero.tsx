@@ -14,7 +14,6 @@ import { useRouter } from 'next/navigation';
 import { useInmoCtx } from '../context/InmoContext';
 import { useScroll, useTransform } from 'framer-motion';
 
-const size = 48;
 const Hero = () => {
   const router = useRouter();
   const { user } = useInmoCtx();
@@ -34,15 +33,6 @@ const Hero = () => {
       opacity: 1,
       transition: {
         duration: 0.5
-      }
-    }
-  };
-  const imgVariants = {
-    hidden: { x: 1020 },
-    visible: {
-      x: 0,
-      transition: {
-        duration: 0.7
       }
     }
   };
@@ -77,7 +67,7 @@ const Hero = () => {
   const MotionFlex = motion(Flex);
 
   return (
-    <Box position='relative' height='calc(100vh - 70px)' overflow='hidden'>
+    <Box position='relative' height='calc(100vh - 50px)' overflow='hidden'>
       <MotionBox
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

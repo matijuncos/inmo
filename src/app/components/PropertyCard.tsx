@@ -24,6 +24,7 @@ const PropertyCard = ({
         maxWidth={{ base: '100%', md: '280px' }}
         height='340px'
         borderBottom='solid 8px #B50202'
+        bg='white'
         onClick={goToProperty}
         borderRadius='6px'
         cursor='pointer'
