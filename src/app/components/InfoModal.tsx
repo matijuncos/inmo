@@ -77,74 +77,98 @@ const InfoModal = ({
                 textValue={'Precio: U$D' + information?.price?.toString()}
               />
             )}
-            <IconAndData
-              Icon={FaRulerCombined}
-              textValue={
-                'Metros totales: ' + information?.totalMeters?.toString()
-              }
-            />
-            <IconAndData
-              Icon={FaBath}
-              textValue={'Baños: ' + information?.bathrooms?.toString()}
-            />
-            <IconAndData
-              Icon={FaDoorOpen}
-              textValue={'Ambientes: ' + information?.rooms?.toString()}
-            />
-            <IconAndData
-              Icon={FaBed}
-              textValue={'Dormitorios: ' + information?.bedrooms?.toString()}
-            />
-            <IconAndData
-              Icon={FaBuilding}
-              textValue={'Plantas: ' + information?.stories?.toString()}
-            />
-            <IconAndData
-              Icon={FaCar}
-              textValue={'Garaje: ' + information?.garage?.toString()}
-            />
-            <IconAndData
-              Icon={FaCalendarAlt}
-              textValue={
-                'Antigüedad: ' + information?.antiquity?.toString() + ' años'
-              }
-            />
-            <IconAndData
-              Icon={FaWifi}
-              textValue={'Internet: ' + (information?.internet ? 'Sí' : 'No')}
-            />
-            <IconAndData
-              Icon={FaSnowflake}
-              textValue={
-                'Aire Acondicionado: ' + (information?.ac ? 'Sí' : 'No')
-              }
-            />
-            <IconAndData
-              Icon={FaFire}
-              textValue={'Calefacción: ' + (information?.heat ? 'Sí' : 'No')}
-            />
-            <IconAndData
-              Icon={FaBurn}
-              textValue={'Gas: ' + (information?.gas ? 'Sí' : 'No')}
-            />
-            <IconAndData
-              Icon={FaTags}
-              textValue={'Tipo de vivienda: ' + information?.category}
-            />
-            <IconAndData
-              Icon={FaHandshake}
-              textValue={'Tipo de Operación: ' + information?.operationType}
-            />
-            <IconAndData
-              Icon={FaCheckCircle}
-              textValue={
-                'Disponible: ' + (information?.available ? 'Sí' : 'No')
-              }
-            />
+            {information?.totalMeters && (
+              <IconAndData
+                Icon={FaRulerCombined}
+                textValue={`Metros totales: ${information.totalMeters}m2`}
+              />
+            )}
+            {information?.bathrooms && (
+              <IconAndData
+                Icon={FaBath}
+                textValue={`Baños: ${information.bathrooms}`}
+              />
+            )}
+            {information?.rooms && (
+              <IconAndData
+                Icon={FaDoorOpen}
+                textValue={`Ambientes: ${information.rooms}`}
+              />
+            )}
+            {information?.bedrooms && (
+              <IconAndData
+                Icon={FaBed}
+                textValue={`Dormitorios: ${information.bedrooms}`}
+              />
+            )}
+            {information?.stories && (
+              <IconAndData
+                Icon={FaBuilding}
+                textValue={`Plantas: ${information.stories}`}
+              />
+            )}
+            {information?.garage && (
+              <IconAndData
+                Icon={FaCar}
+                textValue={`Garaje: ${information.garage}`}
+              />
+            )}
+            {information?.antiquity && (
+              <IconAndData
+                Icon={FaCalendarAlt}
+                textValue={`Antigüedad: ${information.antiquity} años`}
+              />
+            )}
+            {information?.internet !== undefined && (
+              <IconAndData
+                Icon={FaWifi}
+                textValue={`Internet: ${information.internet ? 'Sí' : 'No'}`}
+              />
+            )}
+            {information?.ac !== undefined && (
+              <IconAndData
+                Icon={FaSnowflake}
+                textValue={`Aire Acondicionado: ${
+                  information.ac ? 'Sí' : 'No'
+                }`}
+              />
+            )}
+            {information?.heat !== undefined && (
+              <IconAndData
+                Icon={FaFire}
+                textValue={`Calefacción: ${information.heat ? 'Sí' : 'No'}`}
+              />
+            )}
+            {information?.gas !== undefined && (
+              <IconAndData
+                Icon={FaBurn}
+                textValue={`Gas: ${information.gas ? 'Sí' : 'No'}`}
+              />
+            )}
+            {information?.category && (
+              <IconAndData
+                Icon={FaTags}
+                textValue={`Tipo de vivienda: ${information.category}`}
+              />
+            )}
+            {information?.operationType && (
+              <IconAndData
+                Icon={FaHandshake}
+                textValue={`Tipo de Operación: ${information.operationType}`}
+              />
+            )}
+            {information?.available !== undefined && (
+              <IconAndData
+                Icon={FaCheckCircle}
+                textValue={`Disponible: ${information.available ? 'Sí' : 'No'}`}
+              />
+            )}
           </div>
           <Box p='16px'>
             <Text fontWeight={600}>Mas detalles:</Text>
-            {information?.more}
+            <Box
+              dangerouslySetInnerHTML={{ __html: information?.more || '' }}
+            />
           </Box>
         </ModalContent>
       </ModalOverlay>

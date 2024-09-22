@@ -15,16 +15,16 @@ const ImagesPreview = ({ images }: { images: string[] }) => {
         backgroundPosition='center'
         borderRadius='3px'
       ></Box>
-      <Flex justifyContent='space-between' flexWrap='wrap' gap='4px' my='8px'>
+      <Flex flexWrap='wrap' gap='8px' my='8px'>
         {images.length > 1 &&
           images.map((img, index) => (
             <Box
-              flex={1}
               key={index}
               borderRadius='3px'
               cursor='pointer'
               onClick={() => setInitialImg(img)}
-              width='80px'
+              flex='1'
+              minWidth='80px'
               height='80px'
               backgroundImage={`url(${img})`}
               backgroundSize='cover'

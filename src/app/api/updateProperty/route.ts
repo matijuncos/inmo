@@ -7,7 +7,7 @@ export async function PUT(request: Request) {
   const body = await request.json();
   const { _id, ...property } = body;
   const { newFiles, ...rest } = property;
-  const admin = await authenticate(request);
+  /*   const admin = await authenticate(request);
   if (!admin) {
     return Response.json(
       {
@@ -18,7 +18,7 @@ export async function PUT(request: Request) {
       }
     );
   }
-
+ */
   try {
     const promises = newFiles.map(async (imgPath: string) => {
       try {

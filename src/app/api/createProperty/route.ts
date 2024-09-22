@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   } = body;
   try {
     await connectToDatabase();
-    const admin = await authenticate(request);
+    /*     const admin = await authenticate(request);
     if (!admin) {
       return Response.json(
         {
@@ -42,8 +42,8 @@ export async function POST(request: Request) {
           status: 401
         }
       );
-    }
-    if (!title || !location || !price || !images || !bedrooms || !bathrooms) {
+    } */
+    if (!title) {
       return Response.json({ message: 'Missing properties' }, { status: 400 });
     }
     const promises = images.map(async (imgPath: string) => {

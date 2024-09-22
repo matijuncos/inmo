@@ -74,7 +74,6 @@ body {
  pointer-events: none;
 }
 .flex-in-card {
-
   border-radius: 6px;
   bottom: 0;
   left: 0;
@@ -95,8 +94,12 @@ body {
   font-size: 16px;
   color: var(--color-info);
   display: flex;
-  text-decoration: underline;
   align-items: center;
+  margin: auto;
+  background-color: #B50202;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 6px;
 }
 
 
@@ -160,7 +163,12 @@ body {
 .icon-data {
   display: flex;
   align-items: center;
+  min-width: fit-content;
   gap: 12px
+ 
+}
+.icon-data * {
+  width: fit-content;
 }
 
 .description {
@@ -268,6 +276,7 @@ body {
 
 .match-page {
   position: relative;
+  padding-top: 76px;
 }
 
 .match-page::after {
@@ -314,13 +323,18 @@ body {
     gap: 8px;
     align-items: center;
    }
+   .cardContainer {
+    height: 350px;
+   }
+   .card {
+    height: 350px;
+   }
 }
 @media (min-width: 650px) {
   .mobile-header {
     display: none !important;
    }
 }
-
 
 @media (max-width: 625px) {
   .buttons {

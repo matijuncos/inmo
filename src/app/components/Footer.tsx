@@ -14,12 +14,9 @@ import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram } from 'react-icons/fa';
 const Footer = () => {
   return (
     <Box
-      className='footer'
-      bg={useColorModeValue('white', 'white')}
-      color={useColorModeValue('white', 'white')}
-      py={10}
-      boxShadow='xl'
-      backgroundColor='rgb(181, 2, 2)'
+      py='3rem'
+      bg={useColorModeValue('gray.50', 'gray.900')}
+      color={useColorModeValue('gray.700', 'gray.200')}
     >
       <Container
         as={Stack}

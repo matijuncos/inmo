@@ -44,6 +44,12 @@ export default function Home() {
   };
 
   const isDisabled = password === '' || email === '';
+  const handleKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' && !isDisabled) {
+      handleLogin();
+    }
+  };
+
   useEffect(() => {
     return () => setLoading(false);
   }, []);
@@ -54,6 +60,7 @@ export default function Home() {
         height='100%'
         minHeight='calc(100vh - 280px)'
         alignItems='center'
+        p={16}
         justifyContent='center'
       >
         {loading ? (
@@ -86,6 +93,7 @@ export default function Home() {
                     placeholder='********'
                     onChange={(e) => setPassword(e.target.value)}
                     type={show ? 'text' : 'password'}
+                    onKeyDown={handleKeyPress}
                   />
                   {password !== '' && (
                     <InputRightElement>
@@ -108,10 +116,10 @@ export default function Home() {
               )}
               <Button
                 onClick={handleLogin}
-                backgroundColor='rgb(181, 2, 2)'
                 color='white'
                 isDisabled={isDisabled}
                 size='lg'
+                backgroundColor='rgb(181, 2, 2)'
                 _disabled={{
                   cursor: 'not-allowed',
                   bg: 'grey'

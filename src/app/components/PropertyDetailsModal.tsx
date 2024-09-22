@@ -174,7 +174,7 @@ const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
                   />
                   <DetailItem
                     label='Metros Cubiertos'
-                    value={property.coveredMeters}
+                    value={property.coveredMeters + 'm2'}
                     icon={FaMapMarkerAlt}
                   />
                   <DetailItem

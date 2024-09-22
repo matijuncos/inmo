@@ -448,12 +448,6 @@ export default function Home() {
                             db?.[currentIndex]?.bedrooms?.toString()
                           }
                         />
-                        <div
-                          className='card-more-info'
-                          onClick={() => setIsInfoModalOpen(true)}
-                        >
-                          <FaInfo /> Más info
-                        </div>
                       </div>
                       <Box
                         maxW='660px'
@@ -461,6 +455,12 @@ export default function Home() {
                         className='flex-in-card'
                         boxShadow='xl'
                       ></Box>
+                      <div
+                        className='card-more-info'
+                        onClick={() => setIsInfoModalOpen(true)}
+                      >
+                        <FaInfo /> Más información
+                      </div>
                     </>
                   )}
                 </div>

@@ -22,17 +22,25 @@ const LikedPropertyItem = ({ item }: { item: Property }) => {
     >
       <Box
         backgroundImage={`url(${item.images?.[0]})`}
+        minW='80px'
         width='80px'
         backgroundPosition='center'
         height='100%'
         backgroundSize='cover'
       />
-      <Box padding='3px'>
-        <Text fontSize='14px' fontWeight={600}>
+      <Box padding='3px' w='calc(100%-80px)' overflow='hidden'>
+        <Text
+          fontSize='14px'
+          fontWeight={600}
+          whiteSpace='nowrap'
+          overflow='hidden'
+          textOverflow='ellipsis'
+          w='calc(100%-80px)'
+        >
           {item.title}
         </Text>
-        <Text fontSize='12px'>U$D{item.price}</Text>
-        <Text fontSize='12px'>Habitaciones: {item.rooms}</Text>
+        {item.price && <Text fontSize='12px'>U$D{item.price}</Text>}
+        {item.rooms && <Text fontSize='12px'>Habitaciones: {item.rooms}</Text>}
       </Box>
     </Flex>
   );

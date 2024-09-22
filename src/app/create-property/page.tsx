@@ -27,26 +27,26 @@ const initialState = {
   title: '',
   location: '',
   stories: '',
-  pool: false,
+  pool: undefined,
   garage: '',
-  isPrivate: false,
+  isPrivate: undefined,
   antiquity: '',
-  internet: false,
-  ac: false,
-  heat: false,
-  gas: false,
+  internet: undefined,
+  ac: undefined,
+  heat: undefined,
+  gas: undefined,
   more: '',
   category: 'Casa',
   operationType: 'Venta',
   rooms: '',
-  showPrice: false,
+  showPrice: undefined,
   coveredMeters: '',
   totalMeters: '',
   price: '',
   images: [],
   bedrooms: '',
   bathrooms: '',
-  available: true,
+  available: undefined,
   coords: {
     lat: 0,
     lon: 0
@@ -58,6 +58,7 @@ const PropertyForm = () => {
     toast(string, { theme: 'dark', hideProgressBar: true });
   const [formValues, setFormValues] = useState(initialState);
   const [allFiles, setFiles] = useState<File[]>([]);
+  const [loading, setLoading] = useState(false);
   const { user } = useInmoCtx();
   const { getRootProps, getInputProps } = useDropzone({
     accept: { 'image/*': [] },
@@ -125,6 +126,11 @@ const PropertyForm = () => {
           (name) => allFiles.find((file) => file.name === name) as File
         );
       });
+    } else if (name === 'more') {
+      setFormValues({
+        ...formValues,
+        [name]: value
+      });
     } else {
       setFormValues({
         ...formValues,
@@ -135,16 +141,19 @@ const PropertyForm = () => {
 
   const handleSubmit = async (e: React.FormEvent<any>) => {
     e.preventDefault();
+    setLoading(true);
     const token = user?.token;
     // TODO: Validate required features
     try {
       const base64Images = await Promise.all(allFiles.map(toBase64));
+      const formDataToSubmit = {
+        ...formValues,
+        more: formValues.more.replace(/\n/g, '<br>'), // Replace newlines with <br> tags
+        images: base64Images
+      };
       const { data } = await axios.post(
         '/api/createProperty',
-        {
-          ...formValues,
-          images: base64Images
-        },
+        formDataToSubmit,
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -159,8 +168,12 @@ const PropertyForm = () => {
     } catch (error) {
       notify('Oops! Algo salió mal');
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) return <>Loading...</>;
 
   return (
     <Box
@@ -168,6 +181,7 @@ const PropertyForm = () => {
       mx='auto'
       p={6}
       mt={12}
+      bg={'grey'}
       borderWidth={1}
       borderRadius='lg'
       boxShadow='lg'

@@ -1,13 +1,19 @@
 'use client';
-import { Box, Button, Flex, Text } from '@chakra-ui/react';
-import React from 'react';
-import { FaHeart, FaMailBulk } from 'react-icons/fa';
-import { FaHouse } from 'react-icons/fa6';
+import { Box, Button, Flex, Text, Container, Image } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+import {
+  FaHeart,
+  FaMailBulk,
+  FaSearch,
+  FaArrowRight,
+  FaHome,
+  FaMapMarkerAlt
+} from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useInmoCtx } from '../context/InmoContext';
+import { useScroll, useTransform } from 'framer-motion';
 
-const size = 48;
 const Hero = () => {
   const router = useRouter();
   const { user } = useInmoCtx();
@@ -30,266 +36,172 @@ const Hero = () => {
       }
     }
   };
-  const imgVariants = {
-    hidden: { x: 1020 },
-    visible: {
-      x: 0,
-      transition: {
-        duration: 0.7
-      }
-    }
-  };
 
   const goSwipe = () => {
     router.push(user ? '/match' : '/login');
   };
 
+  const [viewportHeight, setViewportHeight] = useState(0);
+  const { scrollY } = useScroll();
+
+  useEffect(() => {
+    setViewportHeight(window.innerHeight);
+    const handleResize = () => setViewportHeight(window.innerHeight);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const y = useTransform(
+    scrollY,
+    [0, viewportHeight],
+    [0, viewportHeight * 0.38]
+  );
+
+  const ctaVariants = {
+    rest: { scale: 1 },
+    hover: { scale: 1.05 },
+    tap: { scale: 0.98 }
+  };
+
+  const MotionBox = motion(Box);
+  const MotionFlex = motion(Flex);
+
   return (
-    <Box position='relative' minHeight='calc(100vh - 80px)' display='flex'>
-      <motion.div
-        variants={containerVariants}
-        initial='hidden'
-        animate='visible'
+    <Box position='relative' height='calc(100vh)' overflow='hidden'>
+      <MotionBox
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        style={{ y }}
+        position='absolute'
+        top={0}
+        left={0}
+        right={0}
+        bottom={0}
+        zIndex={-1}
       >
+        <Image
+          src='/house-render.jpg'
+          //layout='fill'
+          objectFit='cover'
+          alt='Hero background'
+        />
         <Box
           position='absolute'
-          top='0'
-          right='0'
-          bottom='0'
-          left='0'
-          zIndex='0'
-        >
-          <Box
-            backgroundSize='cover'
-            backgroundRepeat='no-repeat'
-            backgroundImage='url("/house-render.jpg")'
-            height='100%'
-            width='100%'
-          />
-          <Box
-            position='absolute'
-            top='0'
-            right='0'
-            bottom='0'
-            left='0'
-            bg='linear-gradient(to left, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 100%)' // Gradient overlay
-          />
-        </Box>
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+          bg='linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 100%)'
+        />
+      </MotionBox>
 
-        <Box
-          position='relative'
-          display='flex'
-          flexDirection={['column', 'column', 'row']}
-          alignContent='center'
-          justifyContent='space-evenly'
-          padding={['5vw', '3vw']}
-          gap={['16px', '24px']}
-          height='100%'
-          zIndex='10'
-        >
-          <Box
-            gap={['12px', '18px']}
-            flex={1}
-            display='flex'
+      <Container maxW='container.xl' height='100%'>
+        <Flex height='100%' alignItems='center'>
+          <MotionFlex
             flexDirection='column'
+            maxWidth='600px'
+            variants={containerVariants}
+            initial='hidden'
+            animate='visible'
           >
-            <Text
-              fontSize={['28px', '42px']}
-              fontWeight='bold'
-              color='white'
-              as='h1'
-              mt='2rem'
-            >
-              Encontremos la casa de tus sueños
-            </Text>
+            <MotionBox variants={itemVariants}>
+              <Text
+                fontSize={['4xl', '5xl', '6xl']}
+                fontWeight='bold'
+                color='white'
+                lineHeight='1.2'
+                mb={4}
+              >
+                Encuentra el hogar de tus sueños
+              </Text>
+            </MotionBox>
 
-            <motion.div variants={itemVariants}>
-              <Text fontWeight='bold' color='white'>
-                La creatividad hoy no está entre nosotros así que no se que
-                escribir acà
+            <MotionBox variants={itemVariants}>
+              <Text fontSize='xl' color='whiteAlpha.800' mb={8}>
+                Descubre propiedades únicas y haz realidad tu visión de hogar
+                perfecto con nuestra plataforma intuitiva y personalizada.
               </Text>
-            </motion.div>
-            <motion.div variants={itemVariants}>
-              <Text fontWeight='semibold' color='white'>
-                Descubre un nuevo estándar en servicios inmobiliarios. En
-                Santamarina & Asociados, conectamos personas con sus hogares y
-                oportunidades de inversión soñadas, brindando asesoramiento
-                profesional y un enfoque personalizado.
-              </Text>
-            </motion.div>
-            <Flex
-              w='100%'
+            </MotionBox>
+
+            <MotionBox variants={itemVariants}>
+              <MotionBox
+                as='button'
+                onClick={goSwipe}
+                variants={ctaVariants}
+                initial='rest'
+                whileHover='hover'
+                whileTap='tap'
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                bg='linear-gradient(135deg, #B50202 0%, #FF4D4D 100%)'
+                borderRadius='20px'
+                boxShadow='0px 8px 20px rgba(181, 2, 2, 0.3)'
+                p={1}
+                position='relative'
+                overflow='hidden'
+                _before={{
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: '-100%',
+                  width: '100%',
+                  height: '100%',
+                  background:
+                    'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                  transition: '0.5s'
+                }}
+                _hover={{
+                  _before: {
+                    left: '100%'
+                  }
+                }}
+              >
+                <Flex
+                  alignItems='center'
+                  justifyContent='space-between'
+                  bg='white'
+                  borderRadius='18px'
+                  p={4}
+                >
+                  <Flex alignItems='center'>
+                    <Box bg='#B50202' borderRadius='full' p={3} mr={4}>
+                      <FaSearch color='white' size='24px' />
+                    </Box>
+                    <Box textAlign='left'>
+                      <Text fontWeight='bold' fontSize='xl' color='#B50202'>
+                        ¡Empieza tu búsqueda!
+                      </Text>
+                      <Text fontSize='sm' color='gray.600'>
+                        Encuentra tu hogar ideal ahora
+                      </Text>
+                    </Box>
+                  </Flex>
+                  <Box bg='#B50202' borderRadius='full' p={3} ml={4}>
+                    <FaArrowRight color='white' size='24px' />
+                  </Box>
+                </Flex>
+              </MotionBox>
+            </MotionBox>
+
+            <MotionFlex
+              mt={12}
               justifyContent='space-between'
-              alignItems='flex-start'
-              m={['16px auto', '32px auto 18px auto']}
-            >
-              <motion.div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  flex: '1'
-                }}
-                variants={itemVariants}
-              >
-                <Box
-                  width={['80px', '120px']}
-                  display='flex'
-                  alignItems='center'
-                  justifyContent='center'
-                  aspectRatio='1'
-                  border='solid 2px white'
-                  borderRadius='4px'
-                  transition='all ease 0.3s'
-                  _hover={{
-                    transform: 'scale(1.05)'
-                  }}
-                >
-                  <FaHeart size={size} color='white' />
-                </Box>
-                <Text
-                  m=' 8px auto auto auto'
-                  textAlign='center'
-                  color='white'
-                  fontSize={['12px', '18px']}
-                  fontWeight={600}
-                >
-                  Hacé match!
-                </Text>
-              </motion.div>
-
-              <motion.div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  flex: '1'
-                }}
-                variants={itemVariants}
-              >
-                <Box
-                  width={['80px', '120px']}
-                  display='flex'
-                  alignItems='center'
-                  justifyContent='center'
-                  aspectRatio='1'
-                  border='solid 2px white'
-                  borderRadius='4px'
-                  fontWeight={600}
-                  transition='all ease 0.3s'
-                  _hover={{
-                    transform: 'scale(1.05)'
-                  }}
-                >
-                  <FaMailBulk size={size} color='white' />
-                </Box>
-                <Text
-                  m=' 8px auto auto auto'
-                  textAlign='center'
-                  color='white'
-                  fontSize={['12px', '18px']}
-                  fontWeight={600}
-                >
-                  Comunicate con <br />
-                  un representante
-                </Text>
-              </motion.div>
-
-              <motion.div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  flex: '1'
-                }}
-                variants={itemVariants}
-              >
-                <Box
-                  width={['80px', '120px']}
-                  display='flex'
-                  alignItems='center'
-                  justifyContent='center'
-                  aspectRatio='1'
-                  border='solid 2px white'
-                  borderRadius='4px'
-                  transition='all ease 0.3s'
-                  _hover={{
-                    transform: 'scale(1.05)'
-                  }}
-                >
-                  <FaHouse size={size} color='white' />
-                </Box>
-                <Text
-                  fontWeight={600}
-                  m=' 8px auto auto auto'
-                  textAlign='center'
-                  fontSize={['12px', '18px']}
-                  color='white'
-                >
-                  Conocé tu <br />
-                  próximo hogar!
-                </Text>
-              </motion.div>
-            </Flex>
-            <Box
-              position='relative'
-              display={['block', 'block', 'none']}
-              boxShadow='18px 18px 24px rgba(0,0,0, 0.55)'
-              width={['100%', '100%', '40%']}
-              minHeight={['450px', '450px', '450px']}
-              borderRadius='12px'
-              padding='14px'
-              zIndex='10'
-              backgroundImage='url("/placeit.png")'
-              backgroundRepeat='no-repeat'
-              backgroundSize='cover'
-              backgroundPosition='50% 50%'
-            ></Box>
-            <motion.button
-              onClick={goSwipe}
-              style={{
-                padding: '8px',
-                backgroundColor: '#B50202',
-                borderRadius: '4px',
-                color: 'whitesmoke',
-                fontWeight: '600'
-              }}
-              className='cta-button'
               variants={itemVariants}
             >
-              ¡Empezar!
-            </motion.button>
-          </Box>
-          <Box
-            position='relative'
-            p='2rem'
-            display={['none', 'none', 'block']}
-            //   boxShadow='18px 18px 24px rgba(0,0,0, 0.25)'
-            width={['100%', '100%', '40%']}
-            minHeight={['450px', '450px', '450px']}
-            borderRadius='6px'
-            zIndex='10'
-            /*  backgroundImage='url("/placeit.png")'
-            backgroundRepeat='no-repeat'
-            backgroundSize='cover'
-            backgroundPosition='50% 50%' */
-          >
-            <motion.div
-              variants={imgVariants}
-              style={{
-                width: '100%',
-                height: '100%',
-                backgroundImage: 'url("/placeit.png")',
-                backgroundRepeat: 'no-repeat',
-                backgroundSize: 'cover',
-                backgroundPosition: '50% 50%',
-                borderRadius: '3px',
-                boxShadow: '18px 18px 24px rgba(0,0,0, 0.25)'
-              }}
-            ></motion.div>
-          </Box>
-        </Box>
-      </motion.div>
+              {[
+                { icon: FaHeart, text: 'Favoritos personalizados' },
+                { icon: FaHome, text: 'Miles de propiedades' },
+                { icon: FaMapMarkerAlt, text: 'Ubicaciones premium' }
+              ].map((item, index) => (
+                <Flex key={index} alignItems='center' color='white'>
+                  <Box as={item.icon} size='24px' mr={2} />
+                  <Text fontSize='sm'>{item.text}</Text>
+                </Flex>
+              ))}
+            </MotionFlex>
+          </MotionFlex>
+        </Flex>
+      </Container>
     </Box>
   );
 };
