@@ -51,9 +51,12 @@ export default async function PropertiesListSection() {
           px={{ base: '5vw', md: '10vw' }}
           margin='auto'
         >
-          {properties?.map((item, idx) => (
-            <AnimatedPropertyCard key={idx} property={item} index={idx} />
-          ))}
+          {properties?.map((item, idx) => {
+            const data = JSON.parse(JSON.stringify(item));
+            return (
+              <AnimatedPropertyCard key={idx} property={data} index={idx} />
+            );
+          })}
         </Box>
       </Box>
     </Box>

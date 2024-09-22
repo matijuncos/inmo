@@ -67,7 +67,7 @@ const Hero = () => {
   const MotionFlex = motion(Flex);
 
   return (
-    <Box position='relative' height='calc(100vh - 50px)' overflow='hidden'>
+    <Box position='relative' height='calc(100vh)' overflow='hidden'>
       <MotionBox
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

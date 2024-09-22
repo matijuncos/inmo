@@ -22,6 +22,7 @@ import {
   FaCar,
   FaDollarSign,
   FaDoorOpen,
+  FaLocationPin,
   FaRulerCombined
 } from 'react-icons/fa6';
 
@@ -60,7 +61,6 @@ export default async function page({
     garage,
     isPrivate
   } = property;
-
   return (
     <Suspense fallback='Cargando...'>
       <Box width={['95%', '90%', '85%', '80%']} margin='2rem auto' pt='40px'>
@@ -88,75 +88,103 @@ export default async function page({
                 gap: '20px'
               }}
             >
-              <IconAndData
-                Icon={FaDollarSign}
-                textValue={'Ubicación:' + location}
-              />
-              <IconAndData
-                Icon={FaDollarSign}
-                textValue={'Precio: U$D' + price?.toString()}
-              />
-              <IconAndData
-                Icon={FaRulerCombined}
-                textValue={'Metros totales: ' + totalMeters?.toString()}
-              />
-              <IconAndData
-                Icon={FaRulerCombined}
-                textValue={'Metros cubiertos: ' + coveredMeters?.toString()}
-              />
-              <IconAndData
-                Icon={FaBath}
-                textValue={'Baños: ' + bathrooms?.toString()}
-              />
-              <IconAndData
-                Icon={FaDoorOpen}
-                textValue={'Ambientes: ' + rooms?.toString()}
-              />
-              <IconAndData
-                Icon={FaBed}
-                textValue={'Dormitorios: ' + bedrooms?.toString()}
-              />
-              <IconAndData
-                Icon={FaBuilding}
-                textValue={'Plantas: ' + stories?.toString()}
-              />
-              <IconAndData
-                Icon={FaCar}
-                textValue={'Garaje: ' + garage?.toString()}
-              />
-              <IconAndData
-                Icon={FaCalendarAlt}
-                textValue={'Antigüedad: ' + antiquity?.toString() + ' años'}
-              />
-              <IconAndData
-                Icon={FaWifi}
-                textValue={'Internet: ' + (internet ? 'Sí' : 'No')}
-              />
-              <IconAndData
-                Icon={FaSnowflake}
-                textValue={'Aire Acondicionado: ' + ac ? 'Sí' : 'No'}
-              />
-              <IconAndData
-                Icon={FaFire}
-                textValue={'Calefacción: ' + (heat ? 'Sí' : 'No')}
-              />
-              <IconAndData
-                Icon={FaBurn}
-                textValue={'Gas: ' + (gas ? 'Sí' : 'No')}
-              />
-              <IconAndData
-                Icon={FaTags}
-                textValue={'Tipo de vivienda: ' + category}
-              />
-              <IconAndData
-                Icon={FaHandshake}
-                textValue={'Tipo de Operación: ' + operationType}
-              />
+              {location && (
+                <IconAndData
+                  Icon={FaLocationPin}
+                  textValue={`Ubicación: ${location}`}
+                />
+              )}
+              {price && (
+                <IconAndData
+                  Icon={FaDollarSign}
+                  textValue={`Precio: U$D ${price}`}
+                />
+              )}
+              {totalMeters && (
+                <IconAndData
+                  Icon={FaRulerCombined}
+                  textValue={`Metros totales: ${totalMeters}m2`}
+                />
+              )}
+              {coveredMeters && (
+                <IconAndData
+                  Icon={FaRulerCombined}
+                  textValue={`Metros cubiertos: ${coveredMeters}m2`}
+                />
+              )}
+              {bathrooms && (
+                <IconAndData Icon={FaBath} textValue={`Baños: ${bathrooms}`} />
+              )}
+              {rooms && (
+                <IconAndData
+                  Icon={FaDoorOpen}
+                  textValue={`Ambientes: ${rooms}`}
+                />
+              )}
+              {bedrooms && (
+                <IconAndData
+                  Icon={FaBed}
+                  textValue={`Dormitorios: ${bedrooms}`}
+                />
+              )}
+              {stories && (
+                <IconAndData
+                  Icon={FaBuilding}
+                  textValue={`Plantas: ${stories}`}
+                />
+              )}
+              {garage && (
+                <IconAndData Icon={FaCar} textValue={`Garaje: ${garage}`} />
+              )}
+              {antiquity && (
+                <IconAndData
+                  Icon={FaCalendarAlt}
+                  textValue={`Antigüedad: ${antiquity} años`}
+                />
+              )}
+              {internet !== undefined && (
+                <IconAndData
+                  Icon={FaWifi}
+                  textValue={`Internet: ${internet ? 'Sí' : 'No'}`}
+                />
+              )}
+              {ac !== undefined && (
+                <IconAndData
+                  Icon={FaSnowflake}
+                  textValue={`Aire Acondicionado: ${ac ? 'Sí' : 'No'}`}
+                />
+              )}
+              {heat !== undefined && (
+                <IconAndData
+                  Icon={FaFire}
+                  textValue={`Calefacción: ${heat ? 'Sí' : 'No'}`}
+                />
+              )}
+              {gas !== undefined && (
+                <IconAndData
+                  Icon={FaBurn}
+                  textValue={`Gas: ${gas ? 'Sí' : 'No'}`}
+                />
+              )}
+              {category && (
+                <IconAndData
+                  Icon={FaTags}
+                  textValue={`Tipo de vivienda: ${category}`}
+                />
+              )}
+              {operationType && (
+                <IconAndData
+                  Icon={FaHandshake}
+                  textValue={`Tipo de Operación: ${operationType}`}
+                />
+              )}
             </div>
-            <Box p='16px' w='100%' maxW='600px'>
-              <Text fontWeight={600}>Mas detalles:</Text>
-              {more}
-            </Box>
+            {more && (
+              <Box p='16px' w='100%' maxW='600px'>
+                <Text fontWeight={600}>Mas detalles:</Text>
+                <Box dangerouslySetInnerHTML={{ __html: more }} />
+              </Box>
+            )}
 
             <SendEmailbtn property={property} />
           </Box>

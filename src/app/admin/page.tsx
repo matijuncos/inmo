@@ -138,6 +138,7 @@ const Admin = () => {
       />
       {isLoading ? (
         <Box
+          p={16}
           display='flex'
           alignItems='center'
           justifyContent='center'
@@ -146,7 +147,7 @@ const Admin = () => {
           <Loader />
         </Box>
       ) : (
-        <Box>
+        <Box p={16}>
           <Box overflowX='auto'>
             <Table p={5} whiteSpace='nowrap' layout='auto' color='black'>
               <Thead>

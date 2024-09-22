@@ -81,7 +81,7 @@ const FiltersDrawer = ({
                   value={filters.priceMin}
                 >
                   <Stack>
-                    {aggFilters?.prices.map((price, index) => (
+                    {aggFilters?.prices?.map((price, index) => (
                       <Radio
                         key={index + price}
                         name='priceMin'
@@ -102,7 +102,7 @@ const FiltersDrawer = ({
                   value={filters.priceMax}
                 >
                   <Stack>
-                    {aggFilters?.prices.map((price, index) => (
+                    {aggFilters?.prices?.map((price, index) => (
                       <Radio
                         key={index + price + 'max'}
                         name='priceMax'
@@ -159,9 +159,9 @@ const FiltersDrawer = ({
                     <Checkbox
                       key={index + bedroom}
                       name='bedrooms'
-                      value={bedroom.toString()}
+                      value={bedroom?.toString()}
                       onChange={handleCheckboxChange}
-                      isChecked={isChecked('bedrooms', bedroom.toString())}
+                      isChecked={isChecked('bedrooms', bedroom?.toString())}
                     >
                       {bedroom}
                     </Checkbox>

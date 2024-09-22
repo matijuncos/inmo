@@ -26,7 +26,6 @@ import { confirmAlert } from 'react-confirm-alert';
 import { BiTrash } from 'react-icons/bi';
 import { useDropzone } from 'react-dropzone';
 import { FaArrowLeft, FaImage } from 'react-icons/fa';
-import { jwtDecode } from 'jwt-decode';
 import { useInmoCtx } from '@/app/context/InmoContext';
 
 const EditProperty = () => {
@@ -51,24 +50,6 @@ const EditProperty = () => {
       ]);
     }
   });
-
-  useEffect(() => {
-    // TODO: This might be better in context
-    const token = user?.token;
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-
-    const decodedToken = jwtDecode(token);
-    if (decodedToken && 'exp' in decodedToken && decodedToken.exp) {
-      const isExpired = decodedToken.exp * 1000 < Date.now();
-      if (isExpired) {
-        setUser(null);
-        router.push('/login');
-      }
-    }
-  }, [router]);
 
   useEffect(() => {
     if (id) {

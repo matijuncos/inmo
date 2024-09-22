@@ -27,6 +27,7 @@ const PropertyCard = ({
         bg='white'
         onClick={goToProperty}
         borderRadius='6px'
+        boxShadow='lg'
         cursor='pointer'
         transition='all ease 0.2s'
         _hover={{

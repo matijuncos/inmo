@@ -163,7 +163,12 @@ body {
 .icon-data {
   display: flex;
   align-items: center;
+  min-width: fit-content;
   gap: 12px
+ 
+}
+.icon-data * {
+  width: fit-content;
 }
 
 .description {

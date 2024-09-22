@@ -6,7 +6,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   const propertyId = params.id;
-  const admin = await authenticate(request);
+  /*   const admin = await authenticate(request);
   if (!admin) {
     return Response.json(
       {
@@ -16,7 +16,7 @@ export async function DELETE(
         status: 401
       }
     );
-  }
+  } */
   try {
     const deleted = await Property.findOneAndDelete({ _id: propertyId });
     return NextResponse.json(

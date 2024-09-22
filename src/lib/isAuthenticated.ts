@@ -6,7 +6,7 @@ export async function isAuthenticated(
 ): Promise<typeof User | null> {
   await connectToDatabase();
   try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '');
+    const token = request.headers.get('token')?.replace('Bearer ', '');
     if (!token) {
       return null;
     }

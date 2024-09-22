@@ -97,7 +97,7 @@ export default function Register() {
         height='100%'
         alignItems='center'
         justifyContent='center'
-        p={6}
+        p={16}
       >
         <Box
           maxW='md'

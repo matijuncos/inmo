@@ -60,6 +60,7 @@ export default function Home() {
         height='100%'
         minHeight='calc(100vh - 280px)'
         alignItems='center'
+        p={16}
         justifyContent='center'
       >
         {loading ? (

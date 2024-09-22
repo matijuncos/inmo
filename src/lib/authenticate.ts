@@ -8,6 +8,7 @@ export async function authenticate(
   await connectToDatabase();
   try {
     const token = request.headers.get('authorization')?.replace('Bearer ', '');
+    console.log('headers', token);
     if (!token) {
       return null;
     }

@@ -25,8 +25,10 @@ export default async function PropertiesPage() {
           margin='auto'
         >
           {properties?.map((item, idx) => {
+            const data = JSON.parse(JSON.stringify(item));
+
             return (
-              <AnimatedPropertyCard key={idx} property={item} index={idx} />
+              <AnimatedPropertyCard key={idx} property={data} index={idx} />
             );
           })}
         </Box>
